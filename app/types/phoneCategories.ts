@@ -1,0 +1,1 @@
+export const phoneCategories = ["Apple", "Samsung", "Xiaomi", "Google"];

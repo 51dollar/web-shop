@@ -1,0 +1,1 @@
+export { phoneCategories } from './phoneCategories';
