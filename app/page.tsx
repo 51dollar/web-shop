@@ -1,4 +1,7 @@
-import { Container, Filters, Title, TopBar } from "@/components/shared";
+import { Filters } from "@/components/features/filters";
+import { TopBar } from "@/components/features/top-bar";
+import { Container, Title } from "@/components/ui";
+
 
 export default function Page() {
     return (

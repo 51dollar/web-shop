@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { CheckboxFiltersGroup, FilterCheckbox, PriceRangeFilter, Title } from '.';
+import { CheckboxFiltersGroup, FilterCheckbox, PriceRangeFilter } from '.';
+import { Title } from '@/components/ui';
 
 interface Props {
     className?: string;

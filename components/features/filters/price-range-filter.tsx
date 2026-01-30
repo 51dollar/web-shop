@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from "@/lib/utils";
-import { Input, Slider } from "../ui";
+import { Input, Slider } from "../../ui";
 import { useState } from "react";
 
 interface Props {

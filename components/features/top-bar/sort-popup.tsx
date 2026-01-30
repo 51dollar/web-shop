@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ArrowUpDownIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button, Popover, PopoverContent, PopoverTrigger } from "../ui";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "../../ui";
 
 interface Props {
     className?: string

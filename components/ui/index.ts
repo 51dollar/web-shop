@@ -12,3 +12,5 @@ export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Popover, PopoverContent, PopoverTrigger } from "./popover";
 export { Input } from "./input";
 export { Slider } from "./slider";
+export { Container } from "./container";
+export { Title } from "./title";

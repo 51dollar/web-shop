@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from '../ui/checkbox';
+import { Checkbox } from '../../ui/checkbox';
 import { FilterChecboxProps } from '@/app/types';
 
 export const FilterCheckbox: React.FC<FilterChecboxProps> = ({

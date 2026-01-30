@@ -1,5 +1,6 @@
+import { Container } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { Categories, Container, SortPopup } from ".";
+import { Categories, SortPopup } from ".";
 
 
 interface Props {
