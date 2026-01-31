@@ -1,8 +1,8 @@
 import React from 'react';
 import { Checkbox } from '../../ui/checkbox';
-import { FilterChecboxProps } from '@/app/types';
+import { FilterCheckboxProps } from '@/app/types';
 
-export const FilterCheckbox: React.FC<FilterChecboxProps> = ({
+export const FilterCheckbox: React.FC<FilterCheckboxProps> = ({
     text,
     value,
     endAdornment,
