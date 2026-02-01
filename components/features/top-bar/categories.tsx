@@ -1,25 +1,34 @@
-import { cn } from "@/lib/utils"
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
-import { phoneCategories } from "@/app/types"
+'use client'
+
+import { cn } from '@/lib/utils'
+import { phoneCategories } from '@/app/types'
+import { useCategoryStore } from '@/store/category'
 
 interface CategoriesProps {
     className?: string
 }
 
-export const Categories: React.FC<CategoriesProps> = ({ className }) => {
+export const Categories = ({ className }: CategoriesProps) => {
+    const categoryActiveId = useCategoryStore((state) => state.activeId);
+
     return (
-        <Tabs className={cn('', className)}>
-            <TabsList>
-                {phoneCategories.map((category) => (
-                    <TabsTrigger key={category} value={category}>
-                        {category}
-                    </TabsTrigger>
-                ))}
-            </TabsList>
-        </Tabs>
+        <div
+            className={cn(
+                'inline-flex gap-1 rounded-4xl p-1',
+                'shadow-sm ring-1 ring-foreground/10 backdrop-blur-md',
+                className
+            )}
+        >
+            {phoneCategories.map(({ id, name }, index) => (
+                <a className={cn('flex h-7 items-center rounded-4xl px-2 font-medium transition-all hover:bg-muted',
+                    categoryActiveId === id &&
+                    'bg-background shadow-md ring-1 ring-primary/10 text-primary')}
+                    href={`/#${name}`}
+                    key={index}
+                >
+                    {name}
+                </a>
+            ))}
+        </div>
     )
 }
