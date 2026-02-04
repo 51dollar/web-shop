@@ -1,6 +1,6 @@
 "use client"
 
-import { FilterCheckboxProps } from "@/app/types";
+import type { FilterCheckboxProps } from "@/app/types";
 import { Input } from "../../ui";
 import { FilterCheckbox } from ".";
 import { useState } from "react";

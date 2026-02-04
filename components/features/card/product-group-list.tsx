@@ -17,7 +17,7 @@ interface Props {
 
 export const ProductGroupList = ({ title, items, categoryId, listClassName, className }: Props) => {
     const setActiveCategoryId = useCategoryStore((state) => state.setActiveId)
-    const intersectionRef = useRef(null);
+    const intersectionRef = useRef(null!);
     const intersection = useIntersection(intersectionRef, {
         threshold: 0.4,
     });
@@ -26,7 +26,7 @@ export const ProductGroupList = ({ title, items, categoryId, listClassName, clas
         if (intersection?.isIntersecting) {
             setActiveCategoryId(categoryId);
         }
-    }, [categoryId, intersection?.isIntersecting, title]);
+    }, [categoryId, intersection?.isIntersecting, setActiveCategoryId]);
 
     return (
         <div className={className} id={title} ref={intersectionRef}>
