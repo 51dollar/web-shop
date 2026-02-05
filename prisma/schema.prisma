@@ -11,8 +11,27 @@ model User {
   id Int @id @default(autoincrement())
 
   fullName String
-  email    String
+  email    String   @unique
   password String
+  role     UserRole @default(USER)
+  verified DateTime
+
+  provider   String?
+  providerId String? @unique
+
+  cart              Cart?
+  orders            Order[]
+  verificationCodes VerificationCode?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+
+  name     String    @unique
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -24,6 +43,130 @@ model Product {
   name     String
   imageUrl String
 
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  variants ProductVariant[]
+
+  specifications Specifications?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProductVariant {
+  id Int @id @default(autoincrement())
+
+  color    String
+  storage  Int
+  price    Int
+  imageUrl String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  cartItems CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Specifications {
+  id Int @id @default(autoincrement())
+
+  displaySize Float
+  displayType String
+  resolution  String
+  processor   String
+  ram         Int
+  battery     Int
+  mainCamera  String
+  frontCamera String
+  os          String
+  releaseYear Int
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?  @unique
+
+  token String
+
+  totalAmount Int @default(0)
+
+  cartItems CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id Int @id @default(autoincrement())
+
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  productVariantId Int
+
+  cart   Cart @relation(fields: [cartId], references: [id])
+  cartId Int
+
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  token String
+
+  totalAmount Int
+  status      OrderStatus
+  paymentId   String?
+
+  items Json
+
+  fullName String
+  email    String
+  phone    String
+  address  String
+  comment  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationCode {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  code String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, code])
+}
+
+enum OrderStatus {
+  PENDING
+  SUCCEEDED
+  CANCELLED
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
