@@ -25,6 +25,9 @@ npx prisma generate
 
 # Add migration
 npx prisma migrate deploy
+
+# Add start data
+npx prisma db seed
 ```
 
 ## Start Development Server
