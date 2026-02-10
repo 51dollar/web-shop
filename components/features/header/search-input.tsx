@@ -12,33 +12,44 @@ import {
     InputGroupInput,
 } from "@/components/ui/input-group";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Api } from "@/services/api-client";
+import type { Product } from "@/lib/generated/prisma-client";
+import { useClickAway, useDebounce } from "react-use";
 
 export const SearchInput = () => {
     const [focused, setFocused] = useState(false);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
+    const [products, setProducts] = useState<Product[]>([]);
+    const ref = useRef(null);
 
-    const popoverOpen = query.trim().length > 0;
+    useClickAway(ref, () => {
+        setFocused(false);
+    });
+
+    useDebounce(() => {
+        Api.products.search(query).then((items => {
+            setProducts(items);
+        }));
+    }, 300, [query]);
 
     const closeAll = () => {
         setFocused(false);
-        setQuery("");
+        setQuery('');
+        setProducts([]);
     };
 
     return (
         <>
-            {focused && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40"
-                    onClick={closeAll}
-                />
-            )}
+            {focused && <div className="fixed inset-0 bg-black/50 z-40" />}
 
-            <Popover open={popoverOpen}>
+            <Popover>
                 <PopoverTrigger asChild>
-                    <div className="relative z-50 w-full">
+                    <div
+                        ref={ref}
+                        className="relative z-50 w-full">
                         <InputGroup className="bg-white shadow-xs">
                             <InputGroupInput
                                 placeholder="Search..."
@@ -48,7 +59,6 @@ export const SearchInput = () => {
                             />
                             <InputGroupAddon
                                 className="cursor-pointer"
-                                onClick={() => setFocused(true)}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -77,30 +87,37 @@ export const SearchInput = () => {
                     </div>
                 </PopoverTrigger>
 
-                <PopoverContent
-                    className="z-50 w-72 p-2"
-                    align="start"
-                    side="bottom"
-                    sideOffset={8}
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                >
-                    <div className="space-y-2">
-                        <Link
-                            className="flex items-center gap-4 px-2 hover:bg-gray-100 rounded-xl"
-                            href="/product/1">
-                            <Image
-                                src="https://www.apple.com/v/iphone-16e/f/images/overview/contrast/iphone_16e__dxha4illuf2a_xlarge_2x.jpg"
-                                alt="iPhone 16e"
-                                width={42}
-                                height={42}
-                                className="rounded-lg object-cover"
-                            />
-                            <span>
-                                {query}
-                            </span>
-                        </Link>
-                    </div>
-                </PopoverContent>
+                {products.length > 0 && (
+                    <PopoverContent
+                        className="z-50 p-2"
+                        align="start"
+                        side="bottom"
+                        sideOffset={8}
+                        onOpenAutoFocus={(e) => e.preventDefault()}
+                    >
+                        <div className="space-y-2">
+                            {products.map(product => (
+                                <Link
+                                    onClick={closeAll}
+                                    key={product.id}
+                                    href={`/product/${product.id}`}
+                                    className="flex items-center gap-4 px-2 py-1 rounded-xl hover:bg-gray-100"
+                                >
+                                    <div className="relative w-14 h-14 shrink-0">
+                                        <Image
+                                            src={product.imageUrl}
+                                            alt={product.name}
+                                            fill
+                                            className="rounded-sm object-cover"
+                                            sizes="40px"
+                                        />
+                                    </div>
+                                    <span>{product.name}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </PopoverContent>
+                )}
             </Popover>
         </>
     );
