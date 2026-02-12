@@ -29,11 +29,16 @@ export const SearchInput = () => {
         setFocused(false);
     });
 
-    useDebounce(() => {
-        Api.products.search(query).then((items => {
-            setProducts(items);
-        }));
-    }, 300, [query]);
+    useDebounce(
+        () => {
+            Api.products
+                .search(query)
+                .then(setProducts)
+                .catch(console.error);
+        },
+        300,
+        [query]
+    );
 
     const closeAll = () => {
         setFocused(false);
