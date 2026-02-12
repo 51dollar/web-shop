@@ -2,14 +2,35 @@
 
 import { cn } from "@/lib/utils";
 import { Input, Slider } from "../../ui";
-import { useState } from "react";
+import { useState, type FC } from "react";
 
 interface Props {
     className?: string;
 }
 
-export const PriceRangeFilter: React.FC<Props> = ({ className }) => {
-    const [priceRange, setPriceRange] = useState([0, 5000]);
+interface PriceProps {
+    priceFrom: number;
+    priceTo: number;
+}
+
+const MIN = 0;
+const MAX = 20000;
+const STEP = 50;
+
+export const PriceRangeFilter: FC<Props> = ({ className }) => {
+    const [prices, setPrice] = useState<PriceProps>({
+        priceFrom: MIN,
+        priceTo: MAX
+    })
+
+    const { priceFrom, priceTo } = prices;
+
+    const updatePrice = (name: keyof PriceProps, value: number) => {
+        setPrice(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
     return (
         <div className={cn(className)}>
@@ -17,36 +38,40 @@ export const PriceRangeFilter: React.FC<Props> = ({ className }) => {
                 <div className="flex items-center justify-between">
                     <p className="font-bold">Price From and To:</p>
                     <span className="text-muted-foreground text-sm">
-                        {priceRange[0]}р. - {priceRange[1]}р.
+                        {MIN}р. - {MAX}р.
                     </span>
                 </div>
 
                 <div className="flex gap-3 mb-2">
                     <Input
                         type="number"
-                        placeholder="0"
-                        min={0}
-                        max={priceRange[1]}
-                        value={priceRange[0] === 0 ? "" : priceRange[0]}
-                        onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                        aria-label="Price from"
+                        placeholder={String(MIN)}
+                        min={MIN}
+                        max={MAX}
+                        value={String(priceFrom)}
+                        onChange={(e) => updatePrice("priceFrom", Number(e.target.value))}
                     />
                     <Input
                         type="number"
-                        placeholder="5000"
-                        min={priceRange[0]}
-                        max={5000}
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                        aria-label="Price to"
+                        placeholder={String(MAX)}
+                        min={MIN}
+                        max={MAX}
+                        value={String(priceTo)}
+                        onChange={(e) => updatePrice("priceTo", Number(e.target.value))}
                     />
                 </div>
 
                 <Slider
                     id="price-slider"
-                    value={priceRange}
-                    onValueChange={setPriceRange}
-                    min={0}
-                    max={5000}
-                    step={10}
+                    min={MIN}
+                    max={MAX}
+                    step={STEP}
+                    value={[priceFrom, priceTo]}
+                    onValueChange={([from = 0, to = 0]) =>
+                        setPrice({ priceFrom: from, priceTo: to })
+                    }
                 />
             </div>
         </div>
