@@ -3,9 +3,14 @@
 import { cn } from "@/lib/utils";
 import { Input, Slider } from "../../ui";
 import { useState, type FC } from "react";
+import { Skeleton } from "../../ui";
 
 interface Props {
     className?: string;
+    min: number;
+    max: number;
+    step: number;
+    loading?: boolean;
 }
 
 interface PriceProps {
@@ -13,14 +18,10 @@ interface PriceProps {
     priceTo: number;
 }
 
-const MIN = 0;
-const MAX = 20000;
-const STEP = 50;
-
-export const PriceRangeFilter: FC<Props> = ({ className }) => {
+export const PriceRangeFilter: FC<Props> = ({ className, min, max, step, loading }) => {
     const [prices, setPrice] = useState<PriceProps>({
-        priceFrom: MIN,
-        priceTo: MAX
+        priceFrom: min,
+        priceTo: max
     })
 
     const { priceFrom, priceTo } = prices;
@@ -32,13 +33,31 @@ export const PriceRangeFilter: FC<Props> = ({ className }) => {
         }));
     };
 
+    if (loading) {
+        return (
+            <div className={cn(className, "space-y-4")}>
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-34" />
+                    <Skeleton className="h-4 w-26" />
+                </div>
+
+                <div className="flex gap-3">
+                    <Skeleton className="h-10 flex-1 rounded-3xl" />
+                    <Skeleton className="h-10 flex-1 rounded-3xl" />
+                </div>
+
+                <Skeleton className="h-4 w-full rounded-full" />
+            </div>
+        )
+    }
+
     return (
         <div className={cn(className)}>
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <p className="font-bold">Price From and To:</p>
                     <span className="text-muted-foreground text-sm">
-                        {MIN}р. - {MAX}р.
+                        {min}р. - {max}р.
                     </span>
                 </div>
 
@@ -46,18 +65,18 @@ export const PriceRangeFilter: FC<Props> = ({ className }) => {
                     <Input
                         type="number"
                         aria-label="Price from"
-                        placeholder={String(MIN)}
-                        min={MIN}
-                        max={MAX}
+                        placeholder={String(min)}
+                        min={min}
+                        max={max}
                         value={String(priceFrom)}
                         onChange={(e) => updatePrice("priceFrom", Number(e.target.value))}
                     />
                     <Input
                         type="number"
                         aria-label="Price to"
-                        placeholder={String(MAX)}
-                        min={MIN}
-                        max={MAX}
+                        placeholder={String(max)}
+                        min={min}
+                        max={max}
                         value={String(priceTo)}
                         onChange={(e) => updatePrice("priceTo", Number(e.target.value))}
                     />
@@ -65,9 +84,9 @@ export const PriceRangeFilter: FC<Props> = ({ className }) => {
 
                 <Slider
                     id="price-slider"
-                    min={MIN}
-                    max={MAX}
-                    step={STEP}
+                    min={min}
+                    max={max}
+                    step={step}
                     value={[priceFrom, priceTo]}
                     onValueChange={([from = 0, to = 0]) =>
                         setPrice({ priceFrom: from, priceTo: to })

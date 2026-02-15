@@ -10,15 +10,15 @@ type ModelItem = {
 
 interface ReturnProps {
   models: ModelItem[];
-  filterItems: FilterCheckboxProps[];
-  loading: boolean;
+  filterModelItems: FilterCheckboxProps[];
+  loadingModels: boolean;
   selectedIds: Set<string>;
   onAddId: (id: string) => void;
 }
 
 export const useFilterModels = (): ReturnProps => {
   const [models, setModels] = useState<ModelItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingModels, setLoading] = useState(true);
 
   const [selectedIds, { toggle }] = useSet(new Set<string>([]));
 
@@ -30,10 +30,10 @@ export const useFilterModels = (): ReturnProps => {
       .finally(() => setLoading(false));
   }, []);
 
-  const filterItems = models.map((model) => ({
+  const filterModelItems = models.map((model) => ({
     text: model.name,
     value: String(model.id),
   }));
 
-  return { models, filterItems, loading, onAddId: toggle, selectedIds };
+  return { models, filterModelItems, loadingModels, onAddId: toggle, selectedIds };
 };

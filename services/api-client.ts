@@ -1,9 +1,9 @@
 import * as models from "./models";
 import * as products from "./product";
-import * as specifications from "./specifications";
+import * as filters from "./filters";
 
 export const Api = {
   products,
-  specifications,
   models,
+  filters,
 };
