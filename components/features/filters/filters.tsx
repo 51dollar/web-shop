@@ -7,7 +7,7 @@ import { Title } from '@/components/ui';
 import { useFilterModels } from '@/hooks/useFilterModels';
 import { useFilterSpecifications } from '@/hooks/useFilterSpecifications';
 import qs from 'qs';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
     className?: string;
@@ -17,7 +17,9 @@ const MIN = 0;
 const MAX = 20000;
 
 export const Filters: FC<Props> = ({ className }) => {
+    const searchParams = useSearchParams();
     const router = useRouter();
+
     const { filterModelItems, loadingModels, onAddId, selectedIds } = useFilterModels();
     const {
         filters,
@@ -32,11 +34,19 @@ export const Filters: FC<Props> = ({ className }) => {
     } = useFilterSpecifications();
 
     const [prices, setPrices] = useState({
-        priceFrom: MIN,
-        priceTo: MAX,
+        priceFrom: Number(searchParams.get('priceFrom')) || MIN,
+        priceTo: Number(searchParams.get('priceTo')) || MAX,
     });
 
-    const [selected, setSelected] = useState<Record<string, Set<string>>>({});
+    const [selected, setSelected] = useState<Record<string, Set<string>>>(() => ({
+        color: new Set(searchParams.getAll("color")),
+        storage: new Set(searchParams.getAll("storage")),
+        ram: new Set(searchParams.getAll("ram")),
+        os: new Set(searchParams.getAll("os")),
+        processor: new Set(searchParams.getAll("processor")),
+        displayType: new Set(searchParams.getAll("displayType")),
+        displaySize: new Set(searchParams.getAll("displaySize")),
+    }));
 
     const toggle = (group: string, value: string) => {
         setSelected((prev) => {
@@ -70,9 +80,11 @@ export const Filters: FC<Props> = ({ className }) => {
             displaySize: Array.from(selected.displaySize ?? []),
         };
 
-        const query = qs.stringify(buildQuery);
+        const query = qs.stringify(buildQuery, { arrayFormat: "comma" });
 
-        router.push(`?${query}`)
+        router.replace(`?${query}`, {
+            scroll: false
+        })
     }, [selected, prices, selectedIds, router]);
 
     return (
@@ -85,7 +97,7 @@ export const Filters: FC<Props> = ({ className }) => {
                     max={filters?.priceRange.max ?? MAX}
                     step={50}
                     loading={loading}
-                    value={prices ?? { priceFrom: 0, priceTo: 0 }}
+                    value={prices}
                     onChange={(newValue) => setPrices(newValue)}
                 />
             </div>
