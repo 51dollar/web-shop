@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Input, Slider } from "../../ui";
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import { Skeleton } from "../../ui";
 
 interface Props {
@@ -11,27 +11,24 @@ interface Props {
     max: number;
     step: number;
     loading?: boolean;
-}
-
-interface PriceProps {
-    priceFrom: number;
-    priceTo: number;
-}
-
-export const PriceRangeFilter: FC<Props> = ({ className, min, max, step, loading }) => {
-    const [prices, setPrice] = useState<PriceProps>({
-        priceFrom: min,
-        priceTo: max
-    })
-
-    const { priceFrom, priceTo } = prices;
-
-    const updatePrice = (name: keyof PriceProps, value: number) => {
-        setPrice(prev => ({
-            ...prev,
-            [name]: value,
-        }));
+    value: {
+        priceFrom: number;
+        priceTo: number;
     };
+    onChange: (value: { priceFrom: number; priceTo: number }) => void;
+}
+
+export const PriceRangeFilter: FC<Props> = ({
+    className,
+    min,
+    max,
+    step,
+    loading,
+    value,
+    onChange,
+}) => {
+
+    const { priceFrom, priceTo } = value;
 
     if (loading) {
         return (
@@ -69,7 +66,10 @@ export const PriceRangeFilter: FC<Props> = ({ className, min, max, step, loading
                         min={min}
                         max={max}
                         value={String(priceFrom)}
-                        onChange={(e) => updatePrice("priceFrom", Number(e.target.value))}
+                        onChange={(e) => onChange({
+                            priceFrom: Number(e.target.value),
+                            priceTo,
+                        })}
                     />
                     <Input
                         type="number"
@@ -78,7 +78,10 @@ export const PriceRangeFilter: FC<Props> = ({ className, min, max, step, loading
                         min={min}
                         max={max}
                         value={String(priceTo)}
-                        onChange={(e) => updatePrice("priceTo", Number(e.target.value))}
+                        onChange={(e) => onChange({
+                            priceFrom,
+                            priceTo: Number(e.target.value),
+                        })}
                     />
                 </div>
 
@@ -88,8 +91,8 @@ export const PriceRangeFilter: FC<Props> = ({ className, min, max, step, loading
                     max={max}
                     step={step}
                     value={[priceFrom, priceTo]}
-                    onValueChange={([from = 0, to = 0]) =>
-                        setPrice({ priceFrom: from, priceTo: to })
+                    onValueChange={([from = min, to = max]) =>
+                        onChange({ priceFrom: from, priceTo: to })
                     }
                 />
             </div>

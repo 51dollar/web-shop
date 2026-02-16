@@ -6,12 +6,18 @@ import { CheckboxFiltersGroup, PriceRangeFilter } from '.';
 import { Title } from '@/components/ui';
 import { useFilterModels } from '@/hooks/useFilterModels';
 import { useFilterSpecifications } from '@/hooks/useFilterSpecifications';
+import qs from 'qs';
+import { useRouter } from 'next/navigation';
 
 interface Props {
     className?: string;
 }
 
+const MIN = 0;
+const MAX = 20000;
+
 export const Filters: FC<Props> = ({ className }) => {
+    const router = useRouter();
     const { filterModelItems, loadingModels, onAddId, selectedIds } = useFilterModels();
     const {
         filters,
@@ -24,6 +30,11 @@ export const Filters: FC<Props> = ({ className }) => {
         displaySizeItems,
         osItems
     } = useFilterSpecifications();
+
+    const [prices, setPrices] = useState({
+        priceFrom: MIN,
+        priceTo: MAX,
+    });
 
     const [selected, setSelected] = useState<Record<string, Set<string>>>({});
 
@@ -44,19 +55,25 @@ export const Filters: FC<Props> = ({ className }) => {
         });
     };
 
-    const buildQuery = () => ({
-        color: Array.from(selected.color ?? []),
-        storage: Array.from(selected.storage ?? []),
-        ram: Array.from(selected.ram ?? []),
-        os: Array.from(selected.os ?? []),
-        processor: Array.from(selected.processor ?? []),
-        displayType: Array.from(selected.displayType ?? []),
-        displaySize: Array.from(selected.displaySize ?? []),
-    });
-
     useEffect(() => {
-        console.log("QUERY:", buildQuery());
-    }, [selected]);
+        const buildQuery = {
+            ...prices,
+
+            models: Array.from(selectedIds ?? []),
+
+            color: Array.from(selected.color ?? []),
+            storage: Array.from(selected.storage ?? []),
+            ram: Array.from(selected.ram ?? []),
+            os: Array.from(selected.os ?? []),
+            processor: Array.from(selected.processor ?? []),
+            displayType: Array.from(selected.displayType ?? []),
+            displaySize: Array.from(selected.displaySize ?? []),
+        };
+
+        const query = qs.stringify(buildQuery);
+
+        router.push(`?${query}`)
+    }, [selected, prices, selectedIds, router]);
 
     return (
         <div className={cn('', className)}>
@@ -64,10 +81,12 @@ export const Filters: FC<Props> = ({ className }) => {
 
             <div className="mt-2 border-b border-b-neutral-100 py-2">
                 <PriceRangeFilter
-                    min={filters?.priceRange.min ?? 0}
-                    max={filters?.priceRange.max ?? 20000}
+                    min={filters?.priceRange.min ?? MIN}
+                    max={filters?.priceRange.max ?? MAX}
                     step={50}
                     loading={loading}
+                    value={prices ?? { priceFrom: 0, priceTo: 0 }}
+                    onChange={(newValue) => setPrices(newValue)}
                 />
             </div>
 
