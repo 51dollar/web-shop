@@ -1,14 +1,17 @@
-import type { FiltersDTO, UIFilters } from "@/app/types";
-import { mapFiltersToUI } from "@/components/features/filters/filters-mapper";
-import { Api } from "@/services/api-client";
 import { useEffect, useState } from "react";
+import { Api } from "@/services/api-client";
+import type { FiltersDTO } from "@/app/types";
+import {
+  mapFiltersToUI,
+  type UIFilters,
+} from "@/components/features/filters/filters-mapper";
 
 interface ReturnProps extends UIFilters {
   filters: FiltersDTO | null;
   loading: boolean;
 }
 
-export const useFilterSpecifications = (): ReturnProps => {
+export const useFiltersData = (): ReturnProps => {
   const [filters, setFilters] = useState<FiltersDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,15 +19,12 @@ export const useFilterSpecifications = (): ReturnProps => {
     Api.filters
       .getFilters()
       .then(setFilters)
-      .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
-
-  const ui = mapFiltersToUI(filters);
 
   return {
     filters,
     loading,
-    ...ui,
+    ...mapFiltersToUI(filters),
   };
 };

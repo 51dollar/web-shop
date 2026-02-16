@@ -1,4 +1,9 @@
 export interface FiltersDTO {
+  models: {
+    id: number;
+    name: string;
+  }[];
+
   priceRange: {
     min: number;
     max: number;
@@ -12,7 +17,7 @@ export interface FiltersDTO {
     os: string[];
     processor: string[];
     displaySize: number[];
-    displayType: number[];
+    displayType: string[];
     batteryRange: {
       min: number;
       max: number;

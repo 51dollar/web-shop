@@ -1,4 +1,15 @@
-import type { FiltersDTO, FilterCheckboxProps, UIFilters } from "@/app/types";
+import type { FiltersDTO, FilterCheckboxProps } from "@/app/types";
+
+export interface UIFilters {
+  modelItems: FilterCheckboxProps[];
+  colorItems: FilterCheckboxProps[];
+  storageItems: FilterCheckboxProps[];
+  ramItems: FilterCheckboxProps[];
+  osItems: FilterCheckboxProps[];
+  processorItems: FilterCheckboxProps[];
+  displaySizeItems: FilterCheckboxProps[];
+  displayTypeItems: FilterCheckboxProps[];
+}
 
 export const mapToCheckboxItems = (
   values?: (string | number)[],
@@ -11,23 +22,29 @@ export const mapToCheckboxItems = (
 export const mapFiltersToUI = (filters: FiltersDTO | null): UIFilters => {
   if (!filters) {
     return {
-      displaySizeItems: [],
-      displayTypeItems: [],
+      modelItems: [],
+      colorItems: [],
+      storageItems: [],
       ramItems: [],
       osItems: [],
       processorItems: [],
-      storageItems: [],
-      colorItems: [],
+      displaySizeItems: [],
+      displayTypeItems: [],
     };
   }
 
   return {
-    displaySizeItems: mapToCheckboxItems(filters.specifications.displaySize),
-    displayTypeItems: mapToCheckboxItems(filters.specifications.displayType),
+    modelItems: filters.models.map((m) => ({
+      text: m.name,
+      value: String(m.id),
+    })),
+
+    colorItems: mapToCheckboxItems(filters.colors),
+    storageItems: mapToCheckboxItems(filters.storage),
     ramItems: mapToCheckboxItems(filters.specifications.ram),
     osItems: mapToCheckboxItems(filters.specifications.os),
     processorItems: mapToCheckboxItems(filters.specifications.processor),
-    storageItems: mapToCheckboxItems(filters.storage),
-    colorItems: mapToCheckboxItems(filters.colors),
+    displaySizeItems: mapToCheckboxItems(filters.specifications.displaySize),
+    displayTypeItems: mapToCheckboxItems(filters.specifications.displayType),
   };
 };
