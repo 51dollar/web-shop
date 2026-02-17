@@ -1,9 +1,9 @@
 "use client"
 
 import type { FilterCheckboxProps } from "@/app/types";
-import { Input, Skeleton } from "../../ui";
+import { Input } from "../../ui";
 import { FilterCheckbox } from ".";
-import { useState, type ChangeEvent, type FC } from "react";
+import { useMemo, useState, type ChangeEvent, type FC } from "react";
 import { cn } from "@/lib/utils";
 
 type Item = FilterCheckboxProps;
@@ -13,11 +13,9 @@ interface Props {
     items: Item[];
     defaultItems?: Item[];
     limit?: number;
-    loading?: boolean;
     searchInputPlaceholder?: string;
     onClickCheckbox?: (id: string) => void;
-    defaultValue?: string[];
-    selectedIds?: Set<string>;
+    selectedIds?: string[];
     name?: string;
     className?: string;
 }
@@ -27,10 +25,8 @@ export const CheckboxFiltersGroup: FC<Props> = ({
     items,
     defaultItems,
     limit = 5,
-    loading,
     searchInputPlaceholder = 'Search...',
     onClickCheckbox,
-    defaultValue,
     selectedIds,
     name,
     className,
@@ -42,24 +38,15 @@ export const CheckboxFiltersGroup: FC<Props> = ({
         setSearchValue(e.target.value);
     }
 
-    if (loading) {
-        return (
-            <div className={className}>
-                <p className="font-bold mb-2">{title}</p>
+    const list = useMemo(() => {
+        if (!showAll) {
+            return (defaultItems || items).slice(0, limit);
+        }
 
-                {
-                    ...Array(limit).fill(0).map((_, index) => (
-                        <Skeleton key={index} className="h-4 mb-2" />
-                    ))
-                }
-                <Skeleton className="w-28 h-4 mb-2" />
-            </div>
-        )
-    }
-
-    const list = showAll
-        ? items.filter((item) => item.text.toLowerCase().includes(searchValue.toLowerCase()))
-        : (defaultItems || items).slice(0, limit);
+        return items.filter((item) =>
+            item.text.toLowerCase().includes(searchValue.toLowerCase())
+        );
+    }, [showAll, items, defaultItems, limit, searchValue]);
 
     return <div className={className}>
         <p className="font-bold mb-2">{title}</p>
@@ -80,13 +67,13 @@ export const CheckboxFiltersGroup: FC<Props> = ({
                 showAll && "max-h-60 overflow-auto scrollbar"
             )}
         >
-            {list.map((item, index) => (
+            {list.map((item) => (
                 <FilterCheckbox
-                    key={index}
+                    key={item.value}
                     text={item.text}
                     value={item.value}
                     endAdornment={item.endAdornment}
-                    checked={selectedIds?.has(item.value) ?? false}
+                    checked={selectedIds?.includes(item.value) ?? false}
                     onCheckedChange={() => onClickCheckbox?.(item.value)}
                     {...(name && { name })}
                 />

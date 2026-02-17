@@ -2,15 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { Input, Slider } from "../../ui";
-import { type FC } from "react";
-import { Skeleton } from "../../ui";
+import { useMemo, type FC } from "react";
 
 interface Props {
     className?: string;
     min: number;
     max: number;
     step: number;
-    loading?: boolean;
     value: {
         priceFrom: number;
         priceTo: number;
@@ -23,30 +21,23 @@ export const PriceRangeFilter: FC<Props> = ({
     min,
     max,
     step,
-    loading,
     value,
     onChange,
 }) => {
+    const safeFrom = Number.isFinite(value.priceFrom)
+        ? value.priceFrom
+        : min;
 
-    const { priceFrom, priceTo } = value;
+    const safeTo = Number.isFinite(value.priceTo)
+        ? value.priceTo
+        : max;
 
-    if (loading) {
-        return (
-            <div className={cn(className, "space-y-4")}>
-                <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-34" />
-                    <Skeleton className="h-4 w-26" />
-                </div>
-
-                <div className="flex gap-3">
-                    <Skeleton className="h-10 flex-1 rounded-3xl" />
-                    <Skeleton className="h-10 flex-1 rounded-3xl" />
-                </div>
-
-                <Skeleton className="h-4 w-full rounded-full" />
-            </div>
-        )
-    }
+    const normalized = useMemo(() => {
+        return {
+            from: Math.max(min, Math.min(safeFrom, safeTo)),
+            to: Math.min(max, Math.max(safeFrom, safeTo)),
+        };
+    }, [safeFrom, safeTo, min, max]);
 
     return (
         <div className={cn(className)}>
@@ -62,26 +53,28 @@ export const PriceRangeFilter: FC<Props> = ({
                     <Input
                         type="number"
                         aria-label="Price from"
-                        placeholder={String(min)}
+                        value={normalized.from}
                         min={min}
                         max={max}
-                        value={String(priceFrom)}
-                        onChange={(e) => onChange({
-                            priceFrom: Number(e.target.value),
-                            priceTo,
-                        })}
+                        onChange={(e) =>
+                            onChange({
+                                priceFrom: Number(e.target.value),
+                                priceTo: normalized.to,
+                            })
+                        }
                     />
                     <Input
                         type="number"
                         aria-label="Price to"
-                        placeholder={String(max)}
+                        value={normalized.to}
                         min={min}
                         max={max}
-                        value={String(priceTo)}
-                        onChange={(e) => onChange({
-                            priceFrom,
-                            priceTo: Number(e.target.value),
-                        })}
+                        onChange={(e) =>
+                            onChange({
+                                priceFrom: normalized.from,
+                                priceTo: Number(e.target.value),
+                            })
+                        }
                     />
                 </div>
 
@@ -90,7 +83,7 @@ export const PriceRangeFilter: FC<Props> = ({
                     min={min}
                     max={max}
                     step={step}
-                    value={[priceFrom, priceTo]}
+                    value={[normalized.from, normalized.to]}
                     onValueChange={([from = min, to = max]) =>
                         onChange({ priceFrom: from, priceTo: to })
                     }

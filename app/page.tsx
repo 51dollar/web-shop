@@ -1,10 +1,11 @@
 import { ProductGroupList } from "@/components/features/card";
-import { Filters } from "@/components/features/filters";
+import { FiltersSkeleton, FiltersWrapper } from "@/components/features/filters";
 import { TopBar } from "@/components/features/top-bar";
 import { Container, Title } from "@/components/ui";
-
+import { Suspense } from "react";
 
 export default function Page() {
+
     return (
 
         <>
@@ -17,7 +18,9 @@ export default function Page() {
             <Container className="mt-5 pb-14">
                 <div className="flex gap-15">
                     <div className="w-62.5">
-                        <Filters />
+                        <Suspense fallback={<FiltersSkeleton />}>
+                            <FiltersWrapper />
+                        </Suspense>
                     </div>
 
                     <div className="flex-1">
