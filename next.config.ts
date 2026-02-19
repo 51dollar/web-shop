@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         hostname: "images.samsung.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i05.appmifile.com",
+        pathname: "/**",
+      },
     ],
   },
 };

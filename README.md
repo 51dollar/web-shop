@@ -41,4 +41,4 @@ npm run prisma:studio
 ```
 
 Open <http://localhost:3000> in your browser.  
-Open <http://localhost:5555> to access Prisma Studio.
+Open <http://localhost:51212> to access Prisma Studio.

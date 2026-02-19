@@ -42,6 +42,7 @@ model Product {
 
   name     String @unique
   imageUrl String
+  description String
 
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
