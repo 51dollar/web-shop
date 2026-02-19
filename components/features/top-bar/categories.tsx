@@ -1,14 +1,15 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { phoneCategories } from '@/app/types'
 import { useCategoryStore } from '@/store/category'
+import type { Category } from '@/lib/generated/prisma-client'
 
 interface CategoriesProps {
+    items: Category[]
     className?: string
 }
 
-export const Categories = ({ className }: CategoriesProps) => {
+export const Categories = ({ items, className }: CategoriesProps) => {
     const categoryActiveId = useCategoryStore((state) => state.activeId);
 
     return (
@@ -19,7 +20,7 @@ export const Categories = ({ className }: CategoriesProps) => {
                 className
             )}
         >
-            {phoneCategories.map(({ id, name }, index) => (
+            {items.map(({ id, name }, index) => (
                 <a className={cn('flex h-7 items-center rounded-4xl px-2 font-medium transition-all hover:bg-muted',
                     categoryActiveId === id &&
                     'bg-background shadow-md ring-1 ring-primary/10 text-primary')}

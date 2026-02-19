@@ -39,7 +39,7 @@ export const ProductGroupList = ({ title, items, categoryId, listClassName, clas
                         id={product.id}
                         name={product.name}
                         description={product.description}
-                        price={product.items[0].price}
+                        price={product.variants?.[0].price}
                         imageUrl={product.imageUrl}
                     />
                 ))}

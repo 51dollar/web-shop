@@ -56,6 +56,7 @@ export const Filters: FC<Props> = ({ className, initialData }) => {
                     items={items}
                     selectedIds={selected[key]}
                     onClickCheckbox={(id) => toggle(key, id)}
+                    className="mt-2"
                 />
             ))}
         </div>
