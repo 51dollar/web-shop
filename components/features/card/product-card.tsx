@@ -1,21 +1,21 @@
+import { type FC } from 'react';
 import { Button, Card, CardDescription, CardTitle } from '@/components/ui';
 import { ShoppingBasketDone01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
-import Image from 'next/image'
-import React from 'react'
+import Image from 'next/image';
 
 interface Props {
     id: number;
-    name: string
+    name: string;
     description: string;
     price: number;
     imageUrl: string;
     className?: string;
 }
 
-export const ProductCard: React.FC<Props> = ({ id, name, description, price, imageUrl, className }) => {
-    const productImage = imageUrl ?? '/public/logo.png'
+export const ProductCard: FC<Props> = ({id, name, description, price, imageUrl, className}) => {
+    const productImage = imageUrl ?? '/public/logo.png';
 
     return (
         <Card className={className}>
@@ -50,5 +50,5 @@ export const ProductCard: React.FC<Props> = ({ id, name, description, price, ima
                 </div>
             </div>
         </Card>
-    )
-}
+    );
+};

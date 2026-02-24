@@ -1,15 +1,16 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { useCategoryStore } from '@/store/category'
-import type { Category } from '@/lib/generated/prisma-client'
+import { cn } from '@/lib/utils';
+import { useCategoryStore } from '@/store/category';
+import type { Category } from '@/lib/generated/prisma-client';
+import Link from 'next/link';
 
 interface CategoriesProps {
-    items: Category[]
-    className?: string
+    items: Category[];
+    className?: string;
 }
 
-export const Categories = ({ items, className }: CategoriesProps) => {
+export const Categories = ({items, className}: CategoriesProps) => {
     const categoryActiveId = useCategoryStore((state) => state.activeId);
 
     return (
@@ -20,16 +21,18 @@ export const Categories = ({ items, className }: CategoriesProps) => {
                 className
             )}
         >
-            {items.map(({ id, name }, index) => (
-                <a className={cn('flex h-7 items-center rounded-4xl px-2 font-medium transition-all hover:bg-muted',
-                    categoryActiveId === id &&
-                    'bg-background shadow-md ring-1 ring-primary/10 text-primary')}
-                    href={`/#${name}`}
+            {items.map(({id, name}, index) => (
+                <Link
                     key={index}
+                    href={`/#${name}`}
+                    scroll={true}
+                    className={cn('flex h-7 items-center rounded-4xl px-2 font-medium transition-all hover:bg-muted',
+                        categoryActiveId === id &&
+                        'bg-background shadow-md ring-1 ring-primary/10 text-primary')}
                 >
                     {name}
-                </a>
+                </Link>
             ))}
         </div>
-    )
-}
+    );
+};
