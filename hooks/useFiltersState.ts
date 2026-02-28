@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFiltersParams } from "./";
+import { useFiltersParams } from "./index";
 
 export const useFiltersState = () => {
   const params = useFiltersParams();
@@ -28,7 +28,6 @@ export const useFiltersState = () => {
         : [...prev[group], value],
     }));
   };
-
   return {
     prices,
     setPrices,

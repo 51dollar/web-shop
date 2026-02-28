@@ -1,38 +1,33 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Figtree } from "next/font/google";
+import type { ReactNode } from 'react';
+import { Figtree, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/features/header";
 
-
-const figtree = Figtree({ subsets: ['latin'], variable: '--font-sans' });
+const figtree = Figtree({
+  variable: '--font-sans',
+  subsets: ['latin'],
+});
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-    title: "Unibody",
-};
-
-export default function RootLayout({
-    children,
+export default function MainLayout({
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: ReactNode;
 }>) {
-    return (
-        <html lang="en" className={figtree.variable}>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <main className="min-h-screen">
-                    <Header />
-                    {children}
-                </main>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" className={figtree.variable}>
+    <head>
+      <link data-rh="true" rel="icon" href="/logo.png" />
+    </head>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+    </html>
+  );
 }

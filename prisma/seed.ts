@@ -22,10 +22,10 @@ async function create() {
   });
 
   const [apple, samsung, google, xiaomi] = await Promise.all([
-    prisma.category.create({ data: { name: "Apple" } }),
-    prisma.category.create({ data: { name: "Samsung" } }),
-    prisma.category.create({ data: { name: "Google" } }),
-    prisma.category.create({ data: { name: "Xiaomi" } }),
+    prisma.category.create({data: {name: "Apple"}}),
+    prisma.category.create({data: {name: "Samsung"}}),
+    prisma.category.create({data: {name: "Google"}}),
+    prisma.category.create({data: {name: "Xiaomi"}}),
   ]);
 
   await prisma.product.create({
@@ -80,6 +80,27 @@ async function create() {
       variants: {
         create: [
           {
+            color: "Blue",
+            storage: 128,
+            price: 2299,
+            imageUrl:
+              "https://www.apple.com/v/iphone-17/d/images/overview/contrast/iphone_17__ck7zzemcw37m_large.jpg",
+          },
+          {
+            color: "Blue",
+            storage: 256,
+            price: 2499,
+            imageUrl:
+              "https://www.apple.com/v/iphone-17/d/images/overview/contrast/iphone_17__ck7zzemcw37m_large.jpg",
+          },
+          {
+            color: "Blue",
+            storage: 512,
+            price: 2699,
+            imageUrl:
+              "https://www.apple.com/v/iphone-17/d/images/overview/contrast/iphone_17__ck7zzemcw37m_large.jpg",
+          },
+          {
             color: "Black",
             storage: 128,
             price: 2299,
@@ -87,9 +108,16 @@ async function create() {
               "https://www.apple.com/v/iphone-16e/f/images/overview/contrast/iphone_16e__dxha4illuf2a_xlarge_2x.jpg",
           },
           {
-            color: "Blue",
+            color: "Black",
             storage: 256,
             price: 2499,
+            imageUrl:
+              "https://www.apple.com/v/iphone-16e/f/images/overview/contrast/iphone_16e__dxha4illuf2a_xlarge_2x.jpg",
+          },
+          {
+            color: "Black",
+            storage: 512,
+            price: 2699,
             imageUrl:
               "https://www.apple.com/v/iphone-16e/f/images/overview/contrast/iphone_16e__dxha4illuf2a_xlarge_2x.jpg",
           },
@@ -702,15 +730,15 @@ async function create() {
 
   await prisma.cart.createMany({
     data: [
-      { userId: 1, totalAmount: 0, token: "111" },
-      { userId: 2, totalAmount: 0, token: "111" },
+      {userId: 1, totalAmount: 0, token: "111"},
+      {userId: 2, totalAmount: 0, token: "111"},
     ],
   });
 
   await prisma.cartItem.createMany({
     data: [
-      { productVariantId: 1, cartId: 1, quantity: 1 },
-      { productVariantId: 3, cartId: 2, quantity: 1 },
+      {productVariantId: 1, cartId: 1, quantity: 1},
+      {productVariantId: 3, cartId: 2, quantity: 1},
     ],
   });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, type FC } from "react";
+import { type FC, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { CheckboxFiltersGroup, PriceRangeFilter } from ".";
 import { Title } from "@/components/ui";
@@ -13,25 +13,25 @@ interface Props {
     initialData: FiltersDTO;
 }
 
-export const Filters: FC<Props> = ({ className, initialData }) => {
+export const Filters: FC<Props> = ({className, initialData}) => {
     const uiFilters = useMemo(() =>
-        mapFiltersToUI(initialData),
+            mapFiltersToUI(initialData),
         [initialData]
-    )
+    );
 
-    const { prices, setPrices, selected, toggle } = useFiltersState();
+    const {prices, setPrices, selected, toggle} = useFiltersState();
 
     useFiltersUrlSync(prices, selected);
 
     const filterConfig = [
-        { key: "models", title: "Models", items: uiFilters.modelItems },
-        { key: "color", title: "Color", items: uiFilters.colorItems },
-        { key: "storage", title: "Storage", items: uiFilters.storageItems },
-        { key: "ram", title: "RAM", items: uiFilters.ramItems },
-        { key: "processor", title: "Processor", items: uiFilters.processorItems },
-        { key: "displayType", title: "Display Type", items: uiFilters.displayTypeItems },
-        { key: "displaySize", title: "Display Size", items: uiFilters.displaySizeItems },
-        { key: "os", title: "OS", items: uiFilters.osItems },
+        {key: "models", title: "Models", items: uiFilters.modelItems},
+        {key: "color", title: "Color", items: uiFilters.colorItems},
+        {key: "storage", title: "Storage", items: uiFilters.storageItems},
+        {key: "ram", title: "RAM", items: uiFilters.ramItems},
+        {key: "processor", title: "Processor", items: uiFilters.processorItems},
+        {key: "displayType", title: "Display Type", items: uiFilters.displayTypeItems},
+        {key: "displaySize", title: "Display Size", items: uiFilters.displaySizeItems},
+        {key: "os", title: "OS", items: uiFilters.osItems},
     ] as const;
 
     return (
@@ -48,7 +48,7 @@ export const Filters: FC<Props> = ({ className, initialData }) => {
                 />
             </div>
 
-            {filterConfig.map(({ key, title, items }) => (
+            {filterConfig.map(({key, title, items}) => (
                 <CheckboxFiltersGroup
                     key={key}
                     name={key}
