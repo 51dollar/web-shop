@@ -14,16 +14,19 @@ interface Props extends CartItemProps {
   className?: string;
 }
 
-export const CartDrawerItem: FC<Props> = ( {
+export const CartDrawerItem: FC<Props> = ({
   id,
   imageUrl,
-  variant,
   name,
+  color,
+  storage,
   price,
   quantity,
   disabled,
   className
-} ) => {
+}) => {
+  const variant = `${color}, ${storage}`;
+
   return (
     <div className={cn("flex p-5 gap-6", className)}>
       <CartItemDetailsImage src={imageUrl} alt={name} />
