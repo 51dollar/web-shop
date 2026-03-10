@@ -5,7 +5,7 @@ import { CountIconButton } from "@/components/ui/count-icon-button";
 export interface CountButtonProps {
   value?: number;
   size?: 'sm' | 'lg';
-  onClick?: (type: 'plus' | 'minus') => void;
+  onClick: ((type: 'plus' | 'minus') => void) | undefined;
   className?: string;
 }
 

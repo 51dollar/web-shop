@@ -12,6 +12,7 @@ import { Delete02Icon } from "@hugeicons/core-free-icons";
 
 interface Props extends CartItemProps {
   onClickCountButton?: (type: "plus" | "minus") => void;
+  onClickRemoveButton?: () => void;
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export const CartDrawerItem: FC<Props> = ({
   price,
   quantity,
   disabled,
+  onClickRemoveButton,
   onClickCountButton,
   className
 }) => {
@@ -45,6 +47,7 @@ export const CartDrawerItem: FC<Props> = ({
             <CartItemDetailsPrice value={price} />
 
             <HugeiconsIcon
+              onClick={onClickRemoveButton}
               icon={Delete02Icon}
               size={16}
               className="text-gray-400 cursor-pointer hover:text-gray-600"

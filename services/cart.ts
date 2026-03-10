@@ -16,3 +16,8 @@ export const updateCartItem = async (
   });
   return data;
 };
+
+export const removeCartItem = async (itemId: number): Promise<CartDto> => {
+  const { data } = await api.delete<CartDto>(ApiRoutes.CART + `/${itemId}`);
+  return data;
+};

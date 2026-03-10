@@ -60,3 +60,46 @@ export const PATCH = async (
     );
   }
 };
+
+export const DELETE = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) => {
+  try {
+    const { id } = await params;
+    const cartItemId = Number(id);
+    const token = request.cookies.get("cartToken")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const cartItem = await prisma.cartItem.findFirst({
+      where: {
+        id: cartItemId,
+      },
+    });
+
+    if (!cartItem) {
+      return NextResponse.json(
+        { error: "Cart item is not found" },
+        { status: 404 },
+      );
+    }
+
+    await prisma.cartItem.delete({
+      where: {
+        id: cartItemId,
+      },
+    });
+
+    const updateUserCart = await updateCartTotalAmount(token);
+    return NextResponse.json(updateUserCart, { status: 200 });
+  } catch (error) {
+    console.log("[CART_DELETE] Server Error", error);
+    return NextResponse.json(
+      { error: "Don't manage to delete cart" },
+      { status: 500 },
+    );
+  }
+};

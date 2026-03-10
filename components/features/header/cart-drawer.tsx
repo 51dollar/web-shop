@@ -15,6 +15,7 @@ export const CartDrawer: FC<PropsWithChildren<Props>> = ({ className, children }
   const items = useCartStore(state => state.items);
   const getCartItems = useCartStore(state => state.getCartItems);
   const updateItemQuantity = useCartStore(state => state.updateItemQuantity);
+  const removeCartItem = useCartStore(state => state.removeCartItem);
 
   useEffect(() => {
     getCartItems();
@@ -52,6 +53,7 @@ export const CartDrawer: FC<PropsWithChildren<Props>> = ({ className, children }
                     price={item.price}
                     quantity={item.quantity}
                     onClickCountButton={(type) => onClickCountButton(item.id, item.quantity, type)}
+                    onClickRemoveButton={() => removeCartItem(item.id)}
                   />
                 ))
               }
