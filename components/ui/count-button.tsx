@@ -5,16 +5,16 @@ import { CountIconButton } from "@/components/ui/count-icon-button";
 export interface CountButtonProps {
   value?: number;
   size?: 'sm' | 'lg';
-  onClick?: ( type: 'plus' | 'minus' ) => void;
+  onClick?: (type: 'plus' | 'minus') => void;
   className?: string;
 }
 
-export const CountButton: FC<CountButtonProps> = ( {
+export const CountButton: FC<CountButtonProps> = ({
   className,
   onClick,
   value = 1,
   size = 'sm'
-} ) => {
+}) => {
   return (
     <div className={cn('inline-flex items-center justify-between gap-3', className)}>
       <CountIconButton

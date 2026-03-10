@@ -11,6 +11,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 
 interface Props extends CartItemProps {
+  onClickCountButton?: (type: "plus" | "minus") => void;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ export const CartDrawerItem: FC<Props> = ({
   price,
   quantity,
   disabled,
+  onClickCountButton,
   className
 }) => {
   const variant = `${color}, ${storage}`;
@@ -37,7 +39,7 @@ export const CartDrawerItem: FC<Props> = ({
         <hr className="my-3" />
 
         <div className="flex items-center justify-between">
-          <CountButton onClick={type => console.log(type)} value={quantity} />
+          <CountButton onClick={onClickCountButton} value={quantity} />
 
           <div className="flex items-center gap-3">
             <CartItemDetailsPrice value={price} />

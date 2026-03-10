@@ -1,39 +1,58 @@
 import { getCartDetails, type CartStateItem } from "@/lib/get-cart-details";
 import { Api } from "@/services/api-client";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface CartState {
   loading: boolean;
   error: boolean;
   totalAmount: number;
   items: CartStateItem[];
-  fetchCartItems: () => Promise<void>;
+  getCartItems: () => Promise<void>;
   updateItemQuantity: (id: number, quantity: number) => Promise<void>;
   addCartItem: (values: any) => Promise<void>;
   removeCartItem: (id: number) => Promise<void>;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: [],
-  error: false,
-  loading: true,
-  totalAmount: 0,
+export const useCartStore = create<CartState>()(
+  persist(
+    (set) => ({
+      items: [],
+      error: false,
+      loading: true,
+      totalAmount: 0,
 
-  fetchCartItems: async () => {
-    try {
-      set({ loading: true, error: false });
+      getCartItems: async () => {
+        try {
+          set({ loading: true, error: false });
 
-      const data = await Api.cart.fetchCartItems();
-      set(getCartDetails(data));
-    } catch (error) {
-      console.log(error);
-      set({ error: true });
-    } finally {
-      set({ loading: false });
-    }
-  },
+          const data = await Api.cart.getCart();
+          set(getCartDetails(data));
+        } catch (error) {
+          console.log(error);
+          set({ error: true });
+        } finally {
+          set({ loading: false });
+        }
+      },
 
-  removeCartItem: async (id: number) => {},
-  updateItemQuantity: async (id: number) => {},
-  addCartItem: async (value: any) => {},
-}));
+      updateItemQuantity: async (id: number, quantity: number) => {
+        try {
+          set({ loading: true, error: false });
+
+          const data = await Api.cart.updateCartItem(id, quantity);
+          set(getCartDetails(data));
+        } catch (error) {
+          console.log(error);
+          set({ error: true });
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      removeCartItem: async (id: number) => {},
+      addCartItem: async (value: any) => {},
+    }),
+    { name: "cart-storage" },
+  ),
+);
