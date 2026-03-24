@@ -1,12 +1,15 @@
 "use client";
 
-import { type FC, useState } from 'react';
+import { useState, type FC } from 'react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui';
 import { Prisma } from '@/lib/generated/prisma-client';
 import { ProductDetails, ProductPreview } from '@/components/features/product';
 import { useProductSelection } from '@/hooks';
 import { DescriptionProduct } from '@/components/features/product/page/description-product';
+import { useCartStore } from '@/store/cart';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 type Product = Prisma.ProductGetPayload<{
   include: {
@@ -30,8 +33,28 @@ export const ChooseProductModal: FC<Props> = ({
     currentImage,
     selectVariant,
   } = useProductSelection(product.variants);
+  const router = useRouter();
+  const addCartItem = useCartStore(state => state.addCartItem);
+  const loading = useCartStore(state => state.loading);
 
   const [isOpen, setIsOpen] = useState(true);
+
+
+  const onAddProduct = async () => {
+    if (!selectedVariantId) return;
+
+    try {
+      await addCartItem({
+        productId: product.id,
+        variantId: Number(selectedVariantId),
+      });
+
+      toast.success("Product added to cart");
+      router.back();
+    } catch {
+      toast.error("Failed to add product to cart");
+    }
+  };
 
   return (
     <Dialog
@@ -57,6 +80,8 @@ export const ChooseProductModal: FC<Props> = ({
                 selectedVariantId={selectedVariantId}
                 currentPrice={currentPrice}
                 onSelectVariant={selectVariant}
+                onClickAdd={onAddProduct}
+                loading={loading}
               />
             </div>
 

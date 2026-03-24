@@ -1,5 +1,6 @@
 import { getCartDetails, type CartStateItem } from "@/lib/get-cart-details";
 import { Api } from "@/services/api-client";
+import type { CreateCartItemValues } from "@/services/dto/cart-dto";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -10,7 +11,7 @@ export interface CartState {
   items: CartStateItem[];
   getCartItems: () => Promise<void>;
   updateItemQuantity: (id: number, quantity: number) => Promise<void>;
-  addCartItem: (values: any) => Promise<void>;
+  addCartItem: (values: CreateCartItemValues) => Promise<void>;
   removeCartItem: (id: number) => Promise<void>;
 }
 
@@ -61,7 +62,18 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      addCartItem: async (value: any) => {},
+      addCartItem: async (value: CreateCartItemValues) => {
+        try {
+          set({ loading: true, error: false });
+          const data = await Api.cart.addCartItem(value);
+          set(getCartDetails(data));
+        } catch (error) {
+          console.log(error);
+          set({ error: true });
+        } finally {
+          set({ loading: false });
+        }
+      },
     }),
     { name: "cart-storage" },
   ),

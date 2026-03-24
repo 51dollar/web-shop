@@ -17,7 +17,8 @@ interface Props {
   selectedVariantId: string;
   currentPrice: number;
   onSelectVariant: (id: string) => void;
-  onClickAdd?: VoidFunction;
+  onClickAdd?: () => Promise<void> | void;
+  loading?: boolean;
 }
 
 export const ProductDetails: FC<Props> = ({
@@ -29,6 +30,7 @@ export const ProductDetails: FC<Props> = ({
   currentPrice,
   onSelectVariant,
   onClickAdd,
+  loading,
 }) => {
   return (
     <div className={cn(
@@ -88,14 +90,17 @@ export const ProductDetails: FC<Props> = ({
         className="pt-3 border-t border-neutral-200
                 flex items-center justify-between"
       >
-                <span className="text-2xl font-semibold tracking-tight">
-                    {currentPrice} р.
-                </span>
+        <span className="text-2xl font-semibold tracking-tight">
+          {currentPrice} р.
+        </span>
 
         <Button
           size="lg"
           className="px-6"
           onClick={onClickAdd}
+          disabled={loading || !selectedVariantId}
+          loading={loading || false}
+          loadingText="Adding..."
         >
           <HugeiconsIcon icon={ShoppingBasketDone01Icon} />
           Add to Cart

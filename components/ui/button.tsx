@@ -1,6 +1,8 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading01Icon } from '@hugeicons/core-free-icons';
 
 import { cn } from "@/lib/utils";
 
@@ -35,16 +37,24 @@ const buttonVariants = cva(
   }
 );
 
+interface ButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  loading?: boolean;
+  loadingText?: string;
+  children?: React.ReactNode;
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
+  loading,
+  loadingText,
+  children,
+  disabled,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-  asChild?: boolean
-}) {
+}: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button";
 
   return (
@@ -52,9 +62,23 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({variant, size, className}))}
+      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
       {...props}
-    />
+    >
+      {loading ? (
+        loadingText ? (
+          <>
+            <HugeiconsIcon icon={Loading01Icon} className="animate-spin" />
+            {loadingText}
+          </>
+        ) : (
+          <HugeiconsIcon icon={Loading01Icon} className="animate-spin mx-auto" />
+        )
+      ) : (
+        children
+      )}
+    </Comp>
   );
 }
 
