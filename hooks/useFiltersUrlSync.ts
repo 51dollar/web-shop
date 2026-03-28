@@ -1,27 +1,43 @@
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const useFiltersUrlSync = (
   prices: { priceFrom: number; priceTo: number },
   selected: Record<string, string[]>,
 ) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedString = useMemo(() => JSON.stringify(selected), [selected]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const timer = setTimeout(() => {
       const params = new URLSearchParams();
 
-      if (prices.priceFrom) params.set("priceFrom", String(prices.priceFrom));
-
-      if (prices.priceTo) params.set("priceTo", String(prices.priceTo));
+      params.set("price", `${prices.priceFrom}-${prices.priceTo}`);
 
       Object.entries(selected).forEach(([key, values]) => {
-        values.forEach((v) => params.append(key, v));
+        if (values.length) {
+          params.set(key, values.join("-"));
+        }
       });
 
-      router.replace(`?${params.toString()}`, { scroll: false });
-    }, 300);
+      const newUrl = params.toString();
+      const currentUrl = searchParams.toString();
 
-    return () => clearTimeout(timeout);
-  }, [prices, selected, router]);
+      if (newUrl === currentUrl) {
+        return;
+      }
+
+      router.replace(`?${newUrl}`, { scroll: false });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [
+    selected,
+    prices.priceFrom,
+    prices.priceTo,
+    selectedString,
+    router,
+    searchParams,
+  ]);
 };

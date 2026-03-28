@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useFiltersParams } from "./index";
+import { useState, useCallback } from "react";
+import { useFiltersParams } from ".";
 
 export const useFiltersState = () => {
   const params = useFiltersParams();
@@ -20,14 +20,20 @@ export const useFiltersState = () => {
     displaySize: params.displaySize,
   });
 
-  const toggle = (group: keyof typeof selected, value: string) => {
-    setSelected((prev) => ({
-      ...prev,
-      [group]: prev[group].includes(value)
-        ? prev[group].filter((v) => v !== value)
-        : [...prev[group], value],
-    }));
-  };
+  const toggle = useCallback(
+    (group: keyof typeof selected, value: string) => {
+      setSelected((prev) => ({
+        ...prev,
+
+        [group]: prev[group].includes(value)
+          ? prev[group].filter((v) => v !== value)
+          : [...prev[group], value],
+      }));
+    },
+
+    [],
+  );
+
   return {
     prices,
     setPrices,

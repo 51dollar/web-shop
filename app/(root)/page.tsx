@@ -2,13 +2,18 @@ import { ProductGroupList } from "@/components/features/card";
 import { Filters } from "@/components/features/filters";
 import { TopBar } from "@/components/features/top-bar";
 import { Container, Title } from "@/components/ui";
-import { buildFilters, getCategoriesWithProducts } from "@/services";
+import { getCategoriesWithFilters, type GetSearchParams } from "@/lib/get-categories-with-filters";
+import { buildFilters } from "@/services";
+import { Suspense } from "react";
 
-export default async function Page() {
-  const categories = await getCategoriesWithProducts();
+export default async function Page({ searchParams }: { searchParams: Promise<GetSearchParams> }) {
+  const params = await searchParams;
+  const [filtersData, categories] = await Promise.all([
+    buildFilters(),
+    getCategoriesWithFilters(params),
+  ]);
 
   return (
-
     <>
       <Container className="mt-4">
         <Title text="Phone" size="lg" className="font-extrabold" />
@@ -19,7 +24,9 @@ export default async function Page() {
       <Container className="mt-5 pb-14">
         <div className="flex gap-15">
           <div className="w-62.5">
-            <Filters initialData={buildFilters(categories)} />
+            <Suspense>
+              <Filters initialData={filtersData} />
+            </Suspense>
           </div>
 
           <div className="flex-1">

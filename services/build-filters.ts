@@ -1,57 +1,92 @@
 import type { FiltersDTO } from "@/app/types";
-import type { Category, Product, ProductVariant, Specifications } from "@/lib/generated/prisma-client/client";
+import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
-type CategoryWithProducts = Category & {
-  products: (Product & {
-    variants: ProductVariant[];
-    specifications: Specifications | null;
-  })[];
-};
+export const buildFilters = unstable_cache(
+  async (): Promise<FiltersDTO> => {
+    const [models, variants, specs] = await Promise.all([
+      prisma.product.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+        orderBy: {
+          name: "asc",
+        },
+      }),
 
-export function buildFilters(
-  categories: CategoryWithProducts[],
-): FiltersDTO {
-  const products = categories.flatMap((c) => c.products);
+      prisma.productVariant.findMany({
+        select: {
+          color: true,
+          storage: true,
+          price: true,
+        },
+      }),
 
-  const variants = products.flatMap((p) => p.variants);
-  const specs = products
-    .map((p) => p.specifications)
-    .filter(Boolean) as Specifications[];
+      prisma.specifications.findMany({
+        select: {
+          ram: true,
+          os: true,
+          processor: true,
+          displaySize: true,
+          displayType: true,
+          battery: true,
+          releaseYear: true,
+        },
+      }),
+    ]);
 
-  const unique = <T>(arr: T[]) => [...new Set(arr)];
+    const colors = [...new Set(variants.map((v) => v.color))];
 
-  const prices = variants.map((v) => v.price);
+    const storage = [...new Set(variants.map((v) => v.storage))];
 
-  return {
-    models: products.map((p) => ({ id: p.id, name: p.name })),
+    const prices = variants.map((v) => v.price);
 
-    priceRange: {
-      min: Math.min(...prices),
-      max: Math.max(...prices),
-    },
+    const ram = [...new Set(specs.map((v) => v.ram))];
 
-    storage: unique(variants.map((v) => v.storage)).sort((a, b) => a - b),
+    const os = [...new Set(specs.map((v) => v.os))];
 
-    colors: unique(variants.map((v) => v.color)).sort(),
+    const processor = [...new Set(specs.map((v) => v.processor))];
 
-    specifications: {
-      ram: unique(specs.map((s) => s.ram)).sort((a, b) => a - b),
-      os: unique(specs.map((s) => s.os)).sort(),
-      processor: unique(specs.map((s) => s.processor)).sort(),
-      displaySize: unique(specs.map((s) => s.displaySize)).sort(
-        (a, b) => a - b,
-      ),
-      displayType: unique(specs.map((s) => s.displayType)).sort(),
+    const displaySize = [...new Set(specs.map((v) => v.displaySize))];
 
-      batteryRange: {
-        min: Math.min(...specs.map((s) => s.battery)),
-        max: Math.max(...specs.map((s) => s.battery)),
+    const displayType = [...new Set(specs.map((v) => v.displayType))];
+
+    const battery = specs.map((v) => v.battery);
+    const years = specs.map((v) => v.releaseYear);
+
+    return {
+      models,
+
+      priceRange: {
+        min: Math.min(...prices),
+        max: Math.max(...prices),
       },
 
-      releaseYearRange: {
-        min: Math.min(...specs.map((s) => s.releaseYear)),
-        max: Math.max(...specs.map((s) => s.releaseYear)),
+      storage,
+      colors,
+
+      specifications: {
+        ram,
+        os,
+        processor,
+        displaySize,
+        displayType,
+
+        batteryRange: {
+          min: Math.min(...battery),
+          max: Math.max(...battery),
+        },
+
+        releaseYearRange: {
+          min: Math.min(...years),
+          max: Math.max(...years),
+        },
       },
-    },
-  };
-}
+    };
+  },
+  ["filters"],
+  {
+    revalidate: 3600,
+  },
+);

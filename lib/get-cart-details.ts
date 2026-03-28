@@ -17,7 +17,7 @@ interface CartDetails {
 }
 
 export const getCartDetails = (data: CartDto): CartDetails => {
-  const items = data.cartItems.map((item) => ({
+  const items = (data?.cartItems || []).map((item) => ({
     id: item.id,
     quantity: item.quantity,
     name: item.productVariant.product.name,
@@ -29,6 +29,6 @@ export const getCartDetails = (data: CartDto): CartDetails => {
 
   return {
     items,
-    totalAmount: data.totalAmount,
+    totalAmount: data?.totalAmount || 0,
   };
 };
