@@ -9,6 +9,7 @@ export interface CartStateItem {
   storage: number;
   price: number;
   imageUrl: string;
+  disabled?: boolean;
 }
 
 interface CartDetails {
@@ -25,7 +26,8 @@ export const getCartDetails = (data: CartDto): CartDetails => {
     storage: item.productVariant.storage,
     price: calcCartItemTotalAmount(item),
     imageUrl: item.productVariant.product.imageUrl,
-  }));
+    disabled: false,
+  })) as CartStateItem[];
 
   return {
     items,
