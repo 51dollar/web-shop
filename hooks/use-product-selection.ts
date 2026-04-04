@@ -1,22 +1,20 @@
-import { useMemo, useState } from "react";
-import type { Prisma } from "@/lib/generated/prisma-client";
-
-type Variant = Prisma.ProductVariantGetPayload<{}>;
+import type { Variant } from "@/app/types";
+import { useCallback, useMemo, useState } from "react";
 
 export const useProductSelection = (variants: Variant[]) => {
-  const [selectedVariantId, setSelectedVariantId] = useState<string>(() =>
-    variants[0]?.id.toString() ?? ""
+  const [selectedVariantId, setSelectedVariantId] = useState<string>(
+    () => variants[0]?.id.toString() ?? "",
   );
 
   const selectedVariant = useMemo(() => {
-    return variants.find(
-      (v) => v.id.toString() === selectedVariantId
-    ) ?? variants[0];
+    return (
+      variants.find((v) => v.id.toString() === selectedVariantId) ?? variants[0]
+    );
   }, [variants, selectedVariantId]);
 
-  const selectVariant = (id: string) => {
+  const selectVariant = useCallback((id: string) => {
     setSelectedVariantId(id);
-  };
+  }, []);
 
   return {
     selectedVariantId,

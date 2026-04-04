@@ -1,6 +1,6 @@
 'use client';
 
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -24,15 +24,19 @@ export const GroupVariants: FC<Props> = ({
   onClick,
   selectedValue
 }) => {
-  const groupedItems = items.reduce<VariantItem[][]>((acc, item, index) => {
-    const groupIndex = Math.floor(index / 3);
-    if (!acc[groupIndex]) acc[groupIndex] = [];
-    acc[groupIndex].push(item);
-    return acc;
-  }, []);
+  const groupedItems = useMemo(() => {
+    return items.reduce<VariantItem[][]>((acc, item, index) => {
+      const groupIndex = Math.floor(index / 3);
+      if (!acc[groupIndex]) acc[groupIndex] = [];
+      acc[groupIndex].push(item);
+      return acc;
+    }, []);
+  }, [items]);
+
+  const activeValue = selectedValue ?? items[0]?.value ?? "0";
 
   return (
-    <Tabs value={selectedValue || "0"} className={className}>
+    <Tabs value={activeValue} className={className}>
       <div className="flex flex-col gap-2">
         {groupedItems.map((group, groupIndex) => (
           <TabsList
@@ -51,6 +55,7 @@ export const GroupVariants: FC<Props> = ({
                 key={item.value}
                 value={item.value}
                 onClick={() => onClick?.(item.value)}
+                disabled={item.disabled}
                 className={cn(
                   "flex items-center",
                   "h-7 px-2 rounded-4xl font-medium",
@@ -59,8 +64,9 @@ export const GroupVariants: FC<Props> = ({
                   "data-[state=active]:bg-background",
                   "data-[state=active]:shadow-md",
                   "data-[state=active]:ring-1",
-                  "data-[state=active]:ring-foreground/10 ",
-                  "data-[state=active]:scale-[1.02]"
+                  "data-[state=active]:ring-foreground/10",
+                  "data-[state=active]:scale-[1.02]",
+                  item.disabled && "opacity-50 pointer-events-none"
                 )}
               >
                 {item.name}

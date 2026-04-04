@@ -1,32 +1,27 @@
 "use client";
 
 import type { FC } from 'react';
-import { Prisma } from '@/lib/generated/prisma-client';
 import { ProductDetails, ProductPreview } from '@/components/features/product';
-import { useProductSelection } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Container } from '@/components/ui';
 import { DescriptionProduct } from '@/components/features/product/page/description-product';
-
-type Product = Prisma.ProductGetPayload<{
-  include: {
-    variants: true;
-    specifications: true;
-  };
-}>;
+import { useProductView } from '@/hooks/useProductView';
+import type { ProductDto } from '@/app/types';
 
 interface Props {
-  product: Product;
+  product: ProductDto;
   className?: string;
 }
 
-export const DetailsProductPage: FC<Props> = ({className, product}) => {
+export const DetailsProductPage: FC<Props> = ({ className, product }) => {
   const {
-    selectedVariantId,
-    currentPrice,
     currentImage,
+    currentPrice,
+    selectedVariantId,
     selectVariant,
-  } = useProductSelection(product.variants);
+    onAddProduct,
+    loading,
+  } = useProductView(product);
 
   return (
     <Container>
@@ -47,6 +42,8 @@ export const DetailsProductPage: FC<Props> = ({className, product}) => {
             selectedVariantId={selectedVariantId}
             currentPrice={currentPrice}
             onSelectVariant={selectVariant}
+            onClickAdd={onAddProduct}
+            loading={loading}
           />
         </div>
       </div>

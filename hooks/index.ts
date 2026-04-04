@@ -1,4 +1,5 @@
 export { useFiltersParams } from "./useFiltersParams";
 export { useFiltersState } from "./useFiltersState";
 export { useFiltersUrlSync } from "./useFiltersUrlSync";
-export { useProductSelection } from "./use-product-selection";
+export { useProductView } from "./useProductView";
+export { useCleanUrl } from "./useCleanUrl";

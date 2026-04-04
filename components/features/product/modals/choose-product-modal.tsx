@@ -1,25 +1,16 @@
 "use client";
 
-import { useState, type FC } from 'react';
+import { type FC } from 'react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui';
-import { Prisma } from '@/lib/generated/prisma-client';
 import { ProductDetails, ProductPreview } from '@/components/features/product';
-import { useProductSelection } from '@/hooks';
+import { useCleanUrl, useProductView } from '@/hooks';
 import { DescriptionProduct } from '@/components/features/product/page/description-product';
-import { useCartStore } from '@/store/cart';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import type { ProductDto } from '@/app/types';
 
-type Product = Prisma.ProductGetPayload<{
-  include: {
-    variants: true;
-    specifications: true;
-  };
-}>;
 
 interface Props {
-  product: Product;
+  product: ProductDto;
   className?: string;
 }
 
@@ -28,40 +19,24 @@ export const ChooseProductModal: FC<Props> = ({
   product,
 }) => {
   const {
-    selectedVariantId,
-    currentPrice,
     currentImage,
+    currentPrice,
+    selectedVariantId,
     selectVariant,
-  } = useProductSelection(product.variants);
-  const router = useRouter();
-  const addCartItem = useCartStore(state => state.addCartItem);
-  const loading = useCartStore(state => state.loading);
+    onAddProduct,
+    loading,
+  } = useProductView(product);
 
-  const [isOpen, setIsOpen] = useState(true);
-
-
-  const onAddProduct = async () => {
-    if (!selectedVariantId) return;
-
-    try {
-      await addCartItem({
-        productId: product.id,
-        variantId: Number(selectedVariantId),
-      });
-
-      toast.success("Product added to cart");
-      router.back();
-    } catch {
-      toast.error("Failed to add product to cart");
-    }
-  };
+  const { isOpen, handleOpenChange } = useCleanUrl();
 
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
+      onOpenChange={handleOpenChange}
     >
-      <DialogContent className={cn("p-0  bg-white overflow-hidden", className)}>
+      <DialogContent
+        className={cn("p-0  bg-white overflow-hidden", className)}
+      >
         <div className="p-6">
           <div className="flex">
             <div className="w-1/2 flex items-center justify-center p-6">
@@ -80,7 +55,7 @@ export const ChooseProductModal: FC<Props> = ({
                 selectedVariantId={selectedVariantId}
                 currentPrice={currentPrice}
                 onSelectVariant={selectVariant}
-                onClickAdd={onAddProduct}
+                onClickAdd={() => onAddProduct(true)}
                 loading={loading}
               />
             </div>
