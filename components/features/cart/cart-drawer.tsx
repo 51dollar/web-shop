@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, type FC, type PropsWithChildren } from 'react';
 import { Button, Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Title } from '@/components/ui';
 import Link from "next/link";
-import { CartDrawerItem } from "@/components/features/header/cart-drawer-item";
+import { CartDrawerItem } from "@/components/features/cart/cart-drawer-item";
 import { useCartStore } from '@/store/cart';
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";

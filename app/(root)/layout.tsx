@@ -1,6 +1,6 @@
+import { Header } from "@/components/features/header";
 import type { Metadata } from "next";
 import type { ReactNode } from 'react';
-import { Header } from "@/components/features/header";
 
 export const metadata: Metadata = {
   title: "Unibody",

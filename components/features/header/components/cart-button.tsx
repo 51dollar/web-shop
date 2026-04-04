@@ -5,8 +5,8 @@ import { Button } from '@/components/ui';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowRight02Icon, ShoppingBasket01Icon } from '@hugeicons/core-free-icons';
 import { cn } from '@/lib/utils';
-import { CartDrawer } from "@/components/features/header/cart-drawer";
 import { useCartStore } from '@/store/cart';
+import { CartDrawer } from '../../cart';
 
 interface Props {
   className?: string,

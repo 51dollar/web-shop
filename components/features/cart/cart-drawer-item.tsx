@@ -4,8 +4,8 @@ import {
   CartItemDetailsImage,
   CartItemDetailsPrice,
   CartItemInfo
-} from "@/components/features/header/cart-item-details";
-import type { CartItemProps } from "@/components/features/header/types";
+} from "@/components/features/cart/cart-item-details";
+import type { CartItemProps } from "@/components/features/cart/types";
 import { CountButton } from "@/components/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
