@@ -28,3 +28,8 @@ export const addCartItem = async (
   const { data } = await api.post<CartDto>(ApiRoutes.CART, values);
   return data;
 };
+
+export const clearCartTotalAmount = async (): Promise<CartDto> => {
+  const { data } = await api.patch<CartDto>(ApiRoutes.CART);
+  return data;
+};

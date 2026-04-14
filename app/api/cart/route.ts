@@ -95,3 +95,33 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const token = request.cookies.get("cartToken")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const updateCartTotalAmount = await prisma.cart.update({
+      where: {
+        token,
+      },
+      data: {
+        totalAmount: 0,
+        cartItems: {
+          deleteMany: {},
+        },
+      },
+    });
+
+    return NextResponse.json(updateCartTotalAmount, { status: 200 });
+  } catch (error) {
+    console.log("[CART_PATCH] Server Error", error);
+    return NextResponse.json(
+      { message: "Failed to update cart" },
+      { status: 500 },
+    );
+  }
+}

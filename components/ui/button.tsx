@@ -13,6 +13,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline: "border-border bg-input/30 hover:bg-input/50 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
+        outlineBlack: "bg-gray-100 border-black text-foreground hover:bg-gray-200/50 aria-expanded:bg-muted aria-expanded:text-foreground transition-colors duration-200",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted aria-expanded:text-foreground",
         destructive: "bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30",
@@ -67,14 +68,15 @@ function Button({
       {...props}
     >
       {loading ? (
-        loadingText ? (
-          <>
-            <HugeiconsIcon icon={Loading01Icon} className="animate-spin" />
-            {loadingText}
-          </>
-        ) : (
-          <HugeiconsIcon icon={Loading01Icon} className="animate-spin mx-auto" />
-        )
+        <span className="flex items-center justify-center gap-2">
+          <span className="inline-flex">
+            <HugeiconsIcon
+              icon={Loading01Icon}
+              className="animate-spin"
+            />
+          </span>
+          {loadingText}
+        </span>
       ) : (
         children
       )}

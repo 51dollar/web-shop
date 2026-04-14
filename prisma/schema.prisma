@@ -99,7 +99,7 @@ model Cart {
   user   User? @relation(fields: [userId], references: [id])
   userId Int?  @unique
 
-  token String
+  token String @unique
 
   totalAmount Int @default(0)
 

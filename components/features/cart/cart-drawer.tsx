@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, type FC, type PropsWithChildren } from 'react';
+import { useEffect, useState, type FC, type PropsWithChildren } from 'react';
 import { Button, Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, Title } from '@/components/ui';
 import Link from "next/link";
 import { CartDrawerItem } from "@/components/features/cart/cart-drawer-item";
@@ -19,6 +19,8 @@ export const CartDrawer: FC<PropsWithChildren<Props>> = ({ className, children }
   const getCartItems = useCartStore(state => state.getCartItems);
   const updateItemQuantity = useCartStore(state => state.updateItemQuantity);
   const removeCartItem = useCartStore(state => state.removeCartItem);
+
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     getCartItems();
@@ -56,7 +58,7 @@ export const CartDrawer: FC<PropsWithChildren<Props>> = ({ className, children }
               />
 
               <p className="text-center text-gray-500 text-sm max-w-[220px]">
-                Looks like you haven't added any products yet
+                Looks like you haven&apos;t added any products yet
               </p>
 
               <SheetClose className="mt-10">
@@ -122,10 +124,12 @@ export const CartDrawer: FC<PropsWithChildren<Props>> = ({ className, children }
 
                   <Button
                     asChild
+                    onClick={() => setRedirecting(true)}
+                    loading={redirecting}
                     className="w-full h-12 text-base font-semibold shadow-md hover:shadow-lg transition-all duration-300"
                   >
-                    <Link href="/cart">
-                      Place order
+                    <Link href="/checkout">
+                      Go to the order
                     </Link>
                   </Button>
                 </div>
