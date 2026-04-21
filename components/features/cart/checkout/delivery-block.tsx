@@ -22,7 +22,8 @@ import { useCheckoutStore } from "@/store/checkout";
 import { useEffect, type FC } from "react";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks";
-import type { DeliveryInfo } from "@/app/types";
+import { DELIVERY_OPTIONS } from "../../../../lib/delivery-options";
+import type { DeliveryTime } from "@/lib/generated/prisma-client";
 
 interface Props {
     title: string
@@ -70,11 +71,11 @@ export const DeliveryBlock: FC<Props> = ({ title, className }) => {
             if (normalizedComment !== "") {
                 deliveryData.comment = normalizedComment;
             }
-            setDeliveryInfo(deliveryData as DeliveryInfo);
+            setDeliveryInfo(deliveryData);
         }
     }, [debouncedAddress, debouncedDeliveryTime, debouncedComment, savedAddress, savedComment, savedDeliveryTime, setDeliveryInfo]);
 
-    const handleDeliveryTimeChange = (value: string) => {
+    const handleDeliveryTimeChange = (value: DeliveryTime) => {
         setValue("deliveryTime", value, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
     };
 
@@ -110,10 +111,11 @@ export const DeliveryBlock: FC<Props> = ({ title, className }) => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="09:00-12:00">09:00 - 12:00</SelectItem>
-                                        <SelectItem value="12:00-15:00">12:00 - 15:00</SelectItem>
-                                        <SelectItem value="15:00-18:00">15:00 - 18:00</SelectItem>
-                                        <SelectItem value="18:00-21:00">18:00 - 21:00</SelectItem>
+                                        {DELIVERY_OPTIONS.map(([key, label]) => (
+                                            <SelectItem key={key} value={key}>
+                                                {label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>

@@ -2,6 +2,9 @@
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'SUCCEEDED', 'CANCELLED');
 
 -- CreateEnum
+CREATE TYPE "DeliveryTime" AS ENUM ('MORNING', 'AFTERNOON', 'EVENING', 'NIGHT');
+
+-- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
 -- CreateTable
@@ -107,14 +110,15 @@ CREATE TABLE "Order" (
     "userId" INTEGER,
     "token" TEXT NOT NULL,
     "totalAmount" INTEGER NOT NULL,
-    "status" "OrderStatus" NOT NULL,
+    "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "paymentId" TEXT,
     "items" JSONB NOT NULL,
     "fullName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "comment" TEXT NOT NULL,
+    "deliveryTime" "DeliveryTime" NOT NULL,
+    "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

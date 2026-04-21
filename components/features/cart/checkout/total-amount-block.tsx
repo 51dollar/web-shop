@@ -1,5 +1,6 @@
 "use client";
 
+import { createOrder } from "@/app/actions";
 import type { CheckoutFormValues } from "./zod-schema";
 import { Button } from "@/components/ui";
 import {
@@ -9,10 +10,11 @@ import {
 } from "@/components/ui";
 import { useOrderSummary } from "@/hooks";
 import { cn } from "@/lib/utils";
-import { useMemo, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import { useFormContext } from "react-hook-form";
-import { useCheckoutStore } from "@/store/checkout";
-import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { DELIVERY_TIME_MAP } from "@/lib/delivery-options";
 
 interface Props {
     title: string
@@ -20,19 +22,21 @@ interface Props {
 }
 
 export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
-    const setPersonalInfo = useCheckoutStore((state) => state.setPersonalInfo);
-    const setDeliveryInfo = useCheckoutStore((state) => state.setDeliveryInfo);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     const {
         handleSubmit,
-        formState: { isValid, isSubmitting },
+        formState: { isValid },
         watch,
     } = useFormContext<CheckoutFormValues>();
+
     const {
-        subtotal,
         deliveryPrice,
+        subtotal,
         total,
         items,
-        handlePlaceOrder,
+        clearCheckout,
     } = useOrderSummary();
 
     const [firstName, lastName, email, phone, address, deliveryTime] = watch([
@@ -47,17 +51,27 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
     const displayedItems = useMemo(() => items.slice(0, 10), [items]);
     const hasMoreItems = items.length > 10;
     const remainingCount = items.length - 10;
-    const onSubmit = handleSubmit((values) => {
-        const { firstName, lastName, email, phone, address, deliveryTime, comment } = values;
 
-        setPersonalInfo({ firstName, lastName, email, phone });
-        setDeliveryInfo({
-            address,
-            deliveryTime,
-            ...(comment ? { comment } : {}),
-        });
+    const onSubmit = handleSubmit(async (data: CheckoutFormValues) => {
+        try {
+            setLoading(true);
 
-        handlePlaceOrder(values);
+            const result = await createOrder(data);
+
+            if (result?.error) {
+                toast.error(result.error, { icon: "❌" });
+                return;
+            }
+
+            if (result?.url) {
+                router.push(result.url);
+                clearCheckout();
+            }
+        } catch {
+            toast.error("Unexpected error", { icon: "❌" });
+        } finally {
+            setLoading(false);
+        }
     });
 
     return (
@@ -74,7 +88,7 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
                                 <span className="text-gray-600">
                                     {item.name} x{item.quantity}
                                 </span>
-                                <span className="font-medium">{item.price * item.quantity} Br</span>
+                                <span className="font-medium">{subtotal} Br</span>
                             </div>
                         ))}
                         {hasMoreItems && (
@@ -122,7 +136,7 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
                                 <p className="text-gray-600">{address}</p>
                                 {deliveryTime && (
                                     <p className="text-gray-500 text-xs mt-1">
-                                        Delivery time: {deliveryTime}
+                                        Delivery time: {DELIVERY_TIME_MAP[deliveryTime]}
                                     </p>
                                 )}
                                 {comment && (
@@ -134,13 +148,12 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
 
                         <Button
                             type="submit"
+                            loading={loading}
                             onClick={onSubmit}
-                            disabled={!isValid || isSubmitting}
+                            disabled={!isValid}
                             className="w-full h-12 text-base font-semibold mt-2"
                         >
-                            <Link href="/">
-                                Place order
-                            </Link>
+                            Place order
                         </Button>
 
                         {!isValid && (

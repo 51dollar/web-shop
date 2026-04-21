@@ -30,7 +30,6 @@
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
-    "downlevelIteration": true,
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
 

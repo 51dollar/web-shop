@@ -133,7 +133,7 @@ model Order {
   token String
 
   totalAmount Int
-  status      OrderStatus
+  status      OrderStatus @default(PENDING)
   paymentId   String?
 
   items Json
@@ -142,7 +142,8 @@ model Order {
   email    String
   phone    String
   address  String
-  comment  String
+  deliveryTime DeliveryTime
+  comment  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -165,6 +166,13 @@ enum OrderStatus {
   PENDING
   SUCCEEDED
   CANCELLED
+}
+
+enum DeliveryTime {
+  MORNING
+  AFTERNOON
+  EVENING
+  NIGHT
 }
 
 enum UserRole {

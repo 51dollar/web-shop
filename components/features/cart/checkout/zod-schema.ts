@@ -1,5 +1,11 @@
 import { z } from "zod";
 import { isValidPhoneNumber } from "@/lib/phone";
+import { DeliveryTime } from "@/lib/generated/prisma-client";
+
+const deliveryTimeValues = Object.values(DeliveryTime) as [
+  DeliveryTime,
+  ...DeliveryTime[],
+];
 
 export const personalInfoSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -15,7 +21,9 @@ export type PersonalInfoForm = z.infer<typeof personalInfoSchema>;
 export const deliveryInfoSchema = z.object({
   address: z.string().min(5, "Address must be at least 5 characters"),
   comment: z.string().optional(),
-  deliveryTime: z.string().min(1, "Please select delivery time"),
+  deliveryTime: z.enum(deliveryTimeValues, {
+    error: "Please select a delivery time",
+  }),
 });
 
 export type DeliveryInfoForm = z.infer<typeof deliveryInfoSchema>;
