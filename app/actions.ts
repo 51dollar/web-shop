@@ -3,6 +3,7 @@
 import type { CheckoutFormValues } from "@/components/features/cart/checkout/zod-schema";
 import { OrderStatus } from "@/lib/generated/prisma-client";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/send-email";
 import { cookies } from "next/headers";
 
 export async function createOrder(data: CheckoutFormValues) {
@@ -11,7 +12,7 @@ export async function createOrder(data: CheckoutFormValues) {
     const token = cookieStore.get("cartToken")?.value;
 
     if (!token) {
-      throw new Error("Cart token not found");
+      return { error: "Cart token not found" };
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -26,7 +27,7 @@ export async function createOrder(data: CheckoutFormValues) {
       });
 
       if (!userCart || userCart.totalAmount === 0) {
-        throw new Error("Cart not found");
+        return { error: "Cart not found" };
       }
 
       const order = await tx.order.create({
@@ -66,6 +67,8 @@ export async function createOrder(data: CheckoutFormValues) {
 
       return order;
     });
+
+    await sendEmail(result);
 
     return { url: `/payment?orderId=${result.id}` };
   } catch {
