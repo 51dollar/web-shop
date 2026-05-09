@@ -1,36 +1,34 @@
 import { EmailNotificationOrder } from "@/components/features/email-template/email-notification-order";
-import type { OrderWithItems } from "@/components/features/email-template/type";
 import { Resend } from "resend";
 
-export async function sendEmail(result: OrderWithItems) {
+interface SendEmailProps {
+  orderId: number;
+  email: string;
+  totalAmount: number;
+  fullName: string;
+  address: string;
+}
+
+export async function sendEmail(result: SendEmailProps) {
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
     if (!process.env.RESEND_API_KEY) {
       console.error("❌ RESEND_API_KEY not found");
       return;
     }
+
     if (!process.env.RESEND_EMAIL) {
       console.error("❌ RESEND_EMAIL not found");
       return;
     }
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     await resend.emails.send({
       from: process.env.RESEND_EMAIL,
       to: result.email,
-      subject: `Order #${result.id}`,
+      subject: `Order #${result.orderId}`,
       react: EmailNotificationOrder({
-        orderId: result.id,
-        items: result.items.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
-          price: item.price,
-          color: item.color,
-          storage: item.storage,
-          product: {
-            id: item.product.id,
-            name: item.product.name,
-          },
-        })),
+        orderId: result.orderId,
         totalAmount: result.totalAmount,
         fullName: result.fullName,
         address: result.address,

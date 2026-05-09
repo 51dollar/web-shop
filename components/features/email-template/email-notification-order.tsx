@@ -1,15 +1,27 @@
-import type { EmailTemplateProps } from "./type";
+interface Props {
+    orderId: number;
+    totalAmount: number;
+    fullName: string;
+    address: string;
+    paymentMethod: string;
+}
 
 export function EmailNotificationOrder({
     orderId,
-    items,
     totalAmount,
     fullName,
     address,
     paymentMethod,
-}: EmailTemplateProps) {
+}: Props) {
     return (
-        <div style={{ fontFamily: "Arial, sans-serif", padding: 20 }}>
+        <div
+            style={{
+                fontFamily: "Arial, sans-serif",
+                padding: 20,
+                maxWidth: 600,
+                margin: "0 auto",
+            }}
+        >
             <h2>🧾 Order #{orderId}</h2>
 
             <p>
@@ -26,62 +38,41 @@ export function EmailNotificationOrder({
 
             {/* DELIVERY */}
             <div style={{ marginTop: 20 }}>
-                <h3>📦 Delivery</h3>
+                <h3>📦 Delivery address</h3>
                 <p>{address}</p>
             </div>
 
-            {/* ITEMS */}
-            <div style={{ marginTop: 20 }}>
-                <h3>🛒 Items</h3>
-
-                <table
-                    width="100%"
-                    style={{ borderCollapse: "collapse", marginTop: 10 }}
-                >
-                    <thead>
-                        <tr>
-                            <th align="left">Product</th>
-                            <th align="left">Specs</th>
-                            <th align="center">Qty</th>
-                            <th align="right">Price</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {items.map((item) => (
-                            <tr key={item.id}>
-                                <td style={{ padding: "8px 0" }}>
-                                    {item.product.name}
-                                </td>
-
-                                <td style={{ color: "#666", fontSize: 12 }}>
-                                    {item.color} / {item.storage}GB
-                                </td>
-
-                                <td align="center">{item.quantity}</td>
-
-                                <td align="right">
-                                    {item.price * item.quantity} Br
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
             {/* TOTAL */}
-            <div style={{ marginTop: 20 }}>
-                <h3>💰 Total</h3>
-                <p style={{ fontSize: 18, fontWeight: "bold" }}>
+            <div
+                style={{
+                    marginTop: 24,
+                    padding: 16,
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: 8,
+                }}
+            >
+                <h3 style={{ margin: 0 }}>💰 Total</h3>
+
+                <p
+                    style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        marginTop: 8,
+                    }}
+                >
                     {totalAmount} Br
                 </p>
             </div>
 
             {/* FOOTER */}
-            <div style={{ marginTop: 30, fontSize: 12, color: "#888" }}>
-                <p>
-                    If you have any questions, just reply to this email.
-                </p>
+            <div
+                style={{
+                    marginTop: 30,
+                    fontSize: 12,
+                    color: "#888",
+                }}
+            >
+                <p>If you have any questions, just reply to this email.</p>
                 <p>Unibody Store</p>
             </div>
         </div>
