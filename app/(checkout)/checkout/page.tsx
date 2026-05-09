@@ -7,10 +7,12 @@ import { Container, Title } from "@/components/ui";
 import { checkoutFormSchema, type CheckoutFormValues } from "@/components/features/cart/checkout/zod-schema";
 import { useCheckoutStore } from "@/store/checkout";
 import { formatPhoneNumber } from "@/lib/phone";
+import { DeliveryTime } from "@/lib/generated/prisma-client";
 
 export default function CheckoutPage() {
     const personalInfo = useCheckoutStore((state) => state.personalInfo);
     const deliveryInfo = useCheckoutStore((state) => state.deliveryInfo);
+
 
     const form = useForm<CheckoutFormValues>({
         resolver: zodResolver(checkoutFormSchema),
@@ -22,7 +24,7 @@ export default function CheckoutPage() {
             phone: formatPhoneNumber(personalInfo?.phone ?? ""),
             address: deliveryInfo?.address ?? "",
             comment: deliveryInfo?.comment ?? "",
-            deliveryTime: deliveryInfo?.deliveryTime ?? "",
+            deliveryTime: deliveryInfo?.deliveryTime ?? DeliveryTime.MORNING,
         },
     });
 

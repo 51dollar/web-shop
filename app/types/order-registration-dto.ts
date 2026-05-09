@@ -1,3 +1,5 @@
+import type { DeliveryTime } from "@/lib/generated/prisma-client";
+
 export interface PersonalInfo {
   firstName: string;
   lastName: string;
@@ -7,7 +9,7 @@ export interface PersonalInfo {
 
 export interface DeliveryInfo {
   address: string;
-  deliveryTime: string;
+  deliveryTime: DeliveryTime;
   comment?: string;
 }
 

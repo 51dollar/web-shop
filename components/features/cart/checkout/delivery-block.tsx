@@ -64,7 +64,7 @@ export const DeliveryBlock: FC<Props> = ({ title, className }) => {
             savedComment !== normalizedComment;
 
         if (hasChanges) {
-            const deliveryData: { address: string; deliveryTime: string; comment?: string } = {
+            const deliveryData: { address: string; deliveryTime: DeliveryTime; comment?: string } = {
                 address: debouncedAddress,
                 deliveryTime: debouncedDeliveryTime,
             };
@@ -75,8 +75,12 @@ export const DeliveryBlock: FC<Props> = ({ title, className }) => {
         }
     }, [debouncedAddress, debouncedDeliveryTime, debouncedComment, savedAddress, savedComment, savedDeliveryTime, setDeliveryInfo]);
 
-    const handleDeliveryTimeChange = (value: DeliveryTime) => {
-        setValue("deliveryTime", value, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+    const handleDeliveryTimeChange = (value: string) => {
+        setValue("deliveryTime", value as DeliveryTime, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true,
+        });
     };
 
     return (
