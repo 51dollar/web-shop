@@ -58,12 +58,11 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
 
             const result = await createOrder(data);
 
-            if (result?.error) {
+            if (result.success === false && result.error) {
                 toast.error(result.error, { icon: "❌" });
                 return;
             }
-
-            if (result?.url) {
+            if (result.success === true && result.url) {
                 router.push(result.url);
                 clearCheckout();
             }
@@ -88,7 +87,7 @@ export const TotalAmountBlock: FC<Props> = ({ title, className }) => {
                                 <span className="text-gray-600">
                                     {item.name} x{item.quantity}
                                 </span>
-                                <span className="font-medium">{subtotal} Br</span>
+                                <span className="font-medium">{item.price} Br</span>
                             </div>
                         ))}
                         {hasMoreItems && (

@@ -5,3 +5,4 @@ export { useProductView } from "./useProductView";
 export { useCleanUrl } from "./useCleanUrl";
 export { useOrderSummary } from "./use-order-summary";
 export { useDebounce } from "./useDebounce";
+export { usePayment } from "./use-payment";

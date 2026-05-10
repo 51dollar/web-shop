@@ -1,9 +1,9 @@
 "use server";
 
 import type { CheckoutFormValues } from "@/components/features/cart/checkout/zod-schema";
+import { CreatePayment } from "@/lib/create-payment";
 import { OrderStatus } from "@/lib/generated/prisma-client";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/send-email";
 import { cookies } from "next/headers";
 
 export async function createOrder(data: CheckoutFormValues) {
@@ -12,7 +12,7 @@ export async function createOrder(data: CheckoutFormValues) {
     const token = cookieStore.get("cartToken")?.value;
 
     if (!token) {
-      return { error: "Cart token not found" };
+      throw new Error("Cart token not found");
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -27,7 +27,7 @@ export async function createOrder(data: CheckoutFormValues) {
       });
 
       if (!userCart || userCart.totalAmount === 0) {
-        return { error: "Cart not found" };
+        throw new Error("Cart not found");
       }
 
       const order = await tx.order.create({
@@ -68,10 +68,51 @@ export async function createOrder(data: CheckoutFormValues) {
       return order;
     });
 
-    await sendEmail(result);
+    return { success: true, url: `/payment?orderId=${result.id}` };
+  } catch (error) {
+    return {
+      success: false,
+      error: (error as Error).message || "Failed to create order",
+    };
+  }
+}
 
-    return { url: `/payment?orderId=${result.id}` };
-  } catch {
-    return { error: "Server error. Try again later." };
+export async function Payment(orderId: number) {
+  try {
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+
+    if (!order) {
+      throw new Error("Order is not found");
+    }
+
+    const paymentData = await CreatePayment({
+      id: order.id,
+      totalAmount: order.totalAmount,
+      description: `Payment for order #${order.id}`,
+    });
+
+    if (paymentData.success === false) {
+      console.log("Payment error:", paymentData.error);
+      throw new Error("Payment is not created");
+    }
+    if (!paymentData.data) {
+      console.log("Payment data is not found", paymentData.error);
+      throw new Error("Payment is not created");
+    }
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { paymentId: paymentData.data.id },
+    });
+
+    const paymentUrl = paymentData.data.confirmation.confirmation_url;
+
+    return { success: true, url: paymentUrl };
+  } catch (error) {
+    console.log("Payment error:", error);
+    return {
+      success: false,
+      error: "Payment error. Try again later.",
+    };
   }
 }

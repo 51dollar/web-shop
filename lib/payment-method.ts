@@ -1,0 +1,9 @@
+export const PAYMENT_METHODS = {
+  CARD_ONLINE: "CARD_ONLINE",
+  CASH_ON_DELIVERY: "CASH_ON_DELIVERY",
+  CARD_ON_DELIVERY: "CARD_ON_DELIVERY",
+  INSTALLMENTS: "INSTALLMENTS",
+} as const;
+
+export type PaymentMethod =
+  (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];

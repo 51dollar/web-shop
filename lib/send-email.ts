@@ -1,3 +1,4 @@
+import type { OrderItemDto } from "@/app/types/order-item.dto";
 import { EmailNotificationOrder } from "@/components/features/email-template/email-notification-order";
 import { Resend } from "resend";
 
@@ -7,6 +8,8 @@ interface SendEmailProps {
   totalAmount: number;
   fullName: string;
   address: string;
+  paymentMethod: string;
+  items: OrderItemDto[];
 }
 
 export async function sendEmail(result: SendEmailProps) {
@@ -32,7 +35,8 @@ export async function sendEmail(result: SendEmailProps) {
         totalAmount: result.totalAmount,
         fullName: result.fullName,
         address: result.address,
-        paymentMethod: "Card",
+        paymentMethod: result.paymentMethod,
+        items: result.items,
       }),
     });
   } catch (error) {

@@ -1,9 +1,12 @@
+import type { OrderItemDto } from "@/app/types/order-item.dto";
+
 interface Props {
     orderId: number;
     totalAmount: number;
     fullName: string;
     address: string;
     paymentMethod: string;
+    items: OrderItemDto[];
 }
 
 export function EmailNotificationOrder({
@@ -12,6 +15,7 @@ export function EmailNotificationOrder({
     fullName,
     address,
     paymentMethod,
+    items
 }: Props) {
     return (
         <div
@@ -34,6 +38,76 @@ export function EmailNotificationOrder({
             <div style={{ marginTop: 20 }}>
                 <h3>💳 Payment method</h3>
                 <p>{paymentMethod}</p>
+            </div>
+
+            {/* ITEMS */}
+            <div style={{ marginTop: 20 }}>
+                <h3>🛍️ Items</h3>
+                <ul style={{ padding: 0, margin: 0 }}>
+                    {items.map((item) => {
+                        const product = item.product;
+
+                        return (
+                            <li
+                                key={item.id}
+                                style={{
+                                    padding: "12px 0",
+                                    borderBottom: "1px solid #eee",
+                                    fontSize: 14,
+                                    lineHeight: "22px",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontWeight: "bold",
+                                        color: "#111",
+                                    }}
+                                >
+                                    {product.name}
+                                </div>
+
+                                <div
+                                    style={{
+                                        marginTop: 4,
+                                        color: "#666",
+                                    }}
+                                >
+                                    <span>
+                                        🎨 {item.color}
+                                    </span>
+
+                                    {" • "}
+
+                                    <span>
+                                        💾 {item.storage} GB
+                                    </span>
+
+                                    {" • "}
+
+                                    <span>
+                                        📦 Qty: {item.quantity}
+                                    </span>
+
+                                    {" • "}
+
+                                    <span>
+                                        💰 {item.price} Br × {item.quantity}
+                                    </span>
+                                </div>
+
+                                <div
+                                    style={{
+                                        marginTop: 6,
+                                        fontWeight: "bold",
+                                        color: "#111",
+                                    }}
+                                >
+                                    Total: {item.price * item.quantity} Br
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
             </div>
 
             {/* DELIVERY */}
